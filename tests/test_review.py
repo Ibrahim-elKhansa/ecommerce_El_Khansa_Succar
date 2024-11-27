@@ -1,5 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from app_review import app
 
 client = TestClient(app)
@@ -33,9 +37,7 @@ def test_update_review():
     assert response.json()["review"]["rating"] == 5.0
 
 def test_moderate_review():
-    response = client.post("/api/reviews/1/moderate", json={  # Assuming review ID = 1
-        "status": "Approved"
-    })
+    response = client.post("/api/reviews/1/moderate?status=Approved")
     assert response.status_code == 200
     assert response.json()["review"]["moderated"] == "Approved"
 
