@@ -10,9 +10,12 @@ router = APIRouter()
 
 @router.post("/customers")
 def register_customer(customer_data: dict, db: Session = Depends(get_db)):
+    if "wallet_balance" not in customer_data:
+        customer_data["wallet_balance"] = 0.0
     if get_customer_by_username(db, customer_data["username"]):
         raise HTTPException(status_code=400, detail="Username already taken")
     return create_customer(db, customer_data)
+
 
 @router.get("/customers")
 def list_customers(db: Session = Depends(get_db)):
@@ -40,14 +43,21 @@ def remove_customer(username: str, db: Session = Depends(get_db)):
     return {"message": "Customer deleted successfully"}
 
 @router.post("/customers/{username}/charge")
-def charge_customer(username: str, amount: float, db: Session = Depends(get_db)):
+def charge_customer(username: str, payload: dict, db: Session = Depends(get_db)):
+    amount = payload.get("amount")
+    if amount is None:
+        raise HTTPException(status_code=400, detail="Amount is required")
     customer = charge_wallet(db, username, amount)
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer
 
+
 @router.post("/customers/{username}/deduct")
-def deduct_customer(username: str, amount: float, db: Session = Depends(get_db)):
+def deduct_customer(username: str, payload: dict, db: Session = Depends(get_db)):
+    amount = payload.get("amount")
+    if amount is None:
+        raise HTTPException(status_code=400, detail="Amount is required")
     customer = deduct_wallet(db, username, amount)
     if not customer:
         raise HTTPException(status_code=400, detail="Insufficient funds or customer not found")
