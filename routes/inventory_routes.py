@@ -7,7 +7,7 @@ from database import get_db
 router = APIRouter()
 inventory_service = InventoryService()
 
-@router.post("/add")
+@router.post("/inventory")
 def add_item(item_data: dict, db: Session = Depends(get_db)):
     try:
         new_item = inventory_service.create_item(db, item_data)
@@ -15,7 +15,7 @@ def add_item(item_data: dict, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.put("/update/{item_id}")
+@router.put("/inventory/{item_id}")
 def update_item(item_id: int, updates: dict, db: Session = Depends(get_db)):
     try:
         updated_item = inventory_service.update_item(db, item_id, updates)
@@ -23,7 +23,7 @@ def update_item(item_id: int, updates: dict, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.post("/deduct/{item_id}")
+@router.post("/inventory/{item_id}/deduct")
 def deduct_item(item_id: int, db: Session = Depends(get_db)):
     try:
         inventory_service.deduct_item(db, item_id)
@@ -31,12 +31,12 @@ def deduct_item(item_id: int, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/all")
-def get_all_items(db: Session = Depends(get_db)):
+@router.get("/inventory")
+def list_items(db: Session = Depends(get_db)):
     items = inventory_service.get_all_items(db)
     return items
 
-@router.get("/{item_id}")
+@router.get("/inventory/{item_id}")
 def get_item_details(item_id: int, db: Session = Depends(get_db)):
     try:
         item = inventory_service.get_item_details(db, item_id)
