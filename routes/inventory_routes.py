@@ -43,3 +43,14 @@ def get_item_details(item_id: int, db: Session = Depends(get_db)):
         return item
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+@router.delete("/inventory/all")
+def delete_all_items(db: Session = Depends(get_db)):
+    """
+    Deletes all items from the inventory. Useful for cleanup during testing.
+    """
+    try:
+        inventory_service.delete_all_items(db)
+        return {"message": "All items deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
