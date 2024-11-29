@@ -31,14 +31,20 @@ class InventoryService:
         return item
 
     def deduct_item(self, db: Session, item_id: int):
+        """
+        Deducts stock for the specified item by 1.
+        Raises an error if the item does not exist or stock is unavailable.
+        """
         item = db.query(Item).filter(Item.id == item_id).first()
         if not item:
             raise ValueError("Item not found")
         if item.stock_count <= 0:
             raise ValueError("No stock available to deduct")
 
-        item.stock_count -= 1
+        item.stock_count -= 1  # Deduct stock
         db.commit()
+        db.refresh(item)  # Refresh the item to ensure consistency
+        return item
 
     def get_all_items(self, db: Session):
         return db.query(Item).all()
@@ -48,3 +54,10 @@ class InventoryService:
         if not item:
             raise ValueError("Item not found")
         return item
+
+    def delete_all_items(self, db: Session):
+        """
+        Deletes all items from the inventory table.
+        """
+        db.query(Item).delete()
+        db.commit()
