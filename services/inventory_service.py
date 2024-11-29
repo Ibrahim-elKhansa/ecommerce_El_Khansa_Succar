@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 from models.inventory import Item
+from memory_profiler import profile
 
 class InventoryService:
+    @profile
     def create_item(self, db: Session, data: dict):
         if not data.get("name") or not data.get("stock_count"):
             raise ValueError("Name and stock count are required")
@@ -18,6 +20,7 @@ class InventoryService:
         db.refresh(new_item)
         return new_item
 
+    @profile
     def update_item(self, db: Session, item_id: int, data: dict):
         item = db.query(Item).filter(Item.id == item_id).first()
         if not item:
@@ -30,34 +33,31 @@ class InventoryService:
         db.refresh(item)
         return item
 
+    @profile
     def deduct_item(self, db: Session, item_id: int):
-        """
-        Deducts stock for the specified item by 1.
-        Raises an error if the item does not exist or stock is unavailable.
-        """
         item = db.query(Item).filter(Item.id == item_id).first()
         if not item:
             raise ValueError("Item not found")
         if item.stock_count <= 0:
             raise ValueError("No stock available to deduct")
 
-        item.stock_count -= 1  # Deduct stock
+        item.stock_count -= 1
         db.commit()
-        db.refresh(item)  # Refresh the item to ensure consistency
+        db.refresh(item)
         return item
 
+    @profile
     def get_all_items(self, db: Session):
         return db.query(Item).all()
 
+    @profile
     def get_item_details(self, db: Session, item_id: int):
         item = db.query(Item).filter(Item.id == item_id).first()
         if not item:
             raise ValueError("Item not found")
         return item
 
+    @profile
     def delete_all_items(self, db: Session):
-        """
-        Deletes all items from the inventory table.
-        """
         db.query(Item).delete()
         db.commit()

@@ -1,97 +1,77 @@
-import pytest
-import sys, os
-from fastapi.testclient import TestClient
-
+import sys
+import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from fastapi.testclient import TestClient
 from app_sales import app
+from line_profiler import LineProfiler
+
 client = TestClient(app)
 
-@pytest.fixture
-def setup_test_data():
-    """
-    Fixture to initialize test data for sales.
-    Adds a test customer and item to the database before running tests.
-    """
-    client.post("/api/customers", json={
-        "username": "testuser",
-        "wallet_balance": 100.0
-    })
+def test_create_sale():
+    lp = LineProfiler()
+    lp.add_function(client.post)
+    
+    @lp
+    def execute():
+        data = {"customer_id": 1, "item_id": 1, "amount": 100.0}
+        response = client.post("api/sales", json=data)
+        assert response.status_code == 200
+        assert response.json()["sale"]["customer_id"] == 1
+        assert response.json()["sale"]["item_id"] == 1
+        assert response.json()["sale"]["amount"] == 100.0
+    
+    execute()
+    lp.print_stats()
 
-    client.post("/api/inventory", json={
-        "name": "Test Item",
-        "category": "Test Category",
-        "price": 50.0,
-        "description": "A test item description",
-        "stock_count": 10
-    })
+def test_get_sales_by_customer():
+    lp = LineProfiler()
+    lp.add_function(client.get)
 
+    @lp
+    def execute():
+        response = client.get("api/sales/customer/1")
+        assert response.status_code == 200
+        assert isinstance(response.json(), list)
 
-def test_display_goods(setup_test_data):
-    """
-    Test for displaying all goods.
-    """
-    response = client.get("/api/sales/goods")
-    assert response.status_code == 200
-    goods = response.json()
-    assert isinstance(goods, list)
-    assert len(goods) > 0
-    assert goods[0]["name"] == "Test Item"
-    assert goods[0]["price"] == 50.0
+    execute()
+    lp.print_stats()
 
+def test_get_sales_by_item():
+    lp = LineProfiler()
+    lp.add_function(client.get)
 
-def test_get_good_details(setup_test_data):
-    """
-    Test for retrieving details of a specific good.
-    """
-    response = client.get("/api/sales/goods/1")
-    assert response.status_code == 200
-    item = response.json()
-    assert item["name"] == "Test Item"
-    assert item["category"] == "Test Category"
-    assert item["price"] == 50.0
-    assert item["stock_count"] == 10
+    @lp
+    def execute():
+        response = client.get("api/sales/item/1")
+        assert response.status_code == 200
+        assert isinstance(response.json(), list)
 
+    execute()
+    lp.print_stats()
 
-def test_process_sale(setup_test_data):
-    """
-    Test for processing a sale.
-    """
-    response = client.post("/api/sales/testuser", json={"item_id": 1})
-    assert response.status_code == 200
-    sale = response.json()
-    assert sale["customer_username"] == "testuser"
-    assert sale["item_name"] == "Test Item"
-    assert sale["amount"] == 50.0
+def test_update_sale():
+    lp = LineProfiler()
+    lp.add_function(client.put)
 
-    item_response = client.get("/api/sales/goods/1")
-    assert item_response.status_code == 200
-    item = item_response.json()
-    assert item["stock_count"] == 9
+    @lp
+    def execute():
+        updates = {"amount": 200.0}
+        response = client.put("api/sales/1", json=updates)
+        assert response.status_code == 200
+        assert response.json()["sale"]["amount"] == 200.0
 
-    customer_response = client.get("/api/customers/testuser")
-    assert customer_response.status_code == 200
-    customer = customer_response.json()
-    assert customer["wallet_balance"] == 50.0
+    execute()
+    lp.print_stats()
 
+def test_delete_sale():
+    lp = LineProfiler()
+    lp.add_function(client.delete)
 
-def test_process_sale_insufficient_funds(setup_test_data):
-    """
-    Test for processing a sale with insufficient funds.
-    """
-    client.put("/api/customers/testuser", json={"wallet_balance": 10.0})
+    @lp
+    def execute():
+        response = client.delete("api/sales/1")
+        assert response.status_code == 200
+        assert response.json()["message"] == "Sale deleted successfully"
 
-    response = client.post("/api/sales/testuser", json={"item_id": 1})
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Insufficient funds"
-
-
-def test_process_sale_out_of_stock(setup_test_data):
-    """
-    Test for processing a sale when the item is out of stock.
-    """
-    for _ in range(10):
-        client.post("/api/sales/testuser", json={"item_id": 1})
-
-    response = client.post("/api/sales/testuser", json={"item_id": 1})
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Item is out of stock"
+    execute()
+    lp.print_stats()

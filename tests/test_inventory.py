@@ -24,7 +24,7 @@ def setup_inventory():
     return response.json()["item"]["id"]
 
 def test_add_item():
-    client.delete("/api/inventory/all")  # Cleanup before adding a new item
+    client.delete("/api/inventory/all")
     response = client.post("/api/inventory", json={
         "name": "New Item",
         "category": "Electronics",

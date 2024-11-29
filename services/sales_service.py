@@ -1,66 +1,68 @@
 from sqlalchemy.orm import Session
-from models.sales import Item, Customer, Sale
+from models.sales import Sale
+from sqlalchemy.exc import SQLAlchemyError
+
+try:
+    from line_profiler import profile
+except ImportError:
+    def profile(func):
+        return func
+
 
 class SalesService:
-    def display_goods(self, db: Session):
-        """
-        Retrieve all available goods with their names and prices.
-        """
-        return db.query(Item.name, Item.price).all()
+    def __init__(self):
+        pass
 
-    def get_good_details(self, db: Session, item_id: int):
-        """
-        Retrieve full details of a specific item by ID.
-        """
-        item = db.query(Item).filter(Item.id == item_id).first()
-        if not item:
-            raise ValueError("Item not found")
-        return {
-            "id": item.id,
-            "name": item.name,
-            "category": item.category,
-            "price": item.price,
-            "description": item.description,
-            "stock_count": item.stock_count,
-        }
+    @profile
+    def create_sale(self, db: Session, data: dict):
+        try:
+            sale = Sale(**data)
+            db.add(sale)
+            db.commit()
+            db.refresh(sale)
+            return sale
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise ValueError(f"Failed to create sale: {e}")
 
-    def process_sale(self, db: Session, username: str, item_id: int):
-        """
-        Process a sale:
-        - Deduct stock from the item.
-        - Deduct the price from the customer's wallet balance.
-        - Create a new sale record.
-        """
-        item = db.query(Item).filter(Item.id == item_id).first()
-        if not item:
-            raise ValueError("Item not found")
+    @profile
+    def get_sales_by_customer(self, db: Session, customer_id: int):
+        try:
+            return db.query(Sale).filter(Sale.customer_id == customer_id).all()
+        except SQLAlchemyError as e:
+            raise ValueError(f"Failed to retrieve sales for customer {customer_id}: {e}")
 
-        if item.stock_count <= 0:
-            raise ValueError("Item is out of stock")
+    @profile
+    def get_sales_by_item(self, db: Session, item_id: int):
+        try:
+            return db.query(Sale).filter(Sale.item_id == item_id).all()
+        except SQLAlchemyError as e:
+            raise ValueError(f"Failed to retrieve sales for item {item_id}: {e}")
 
-        customer = db.query(Customer).filter(Customer.username == username).first()
-        if not customer:
-            raise ValueError("Customer not found")
+    @profile
+    def delete_sale(self, db: Session, sale_id: int):
+        try:
+            sale = db.query(Sale).filter(Sale.id == sale_id).first()
+            if not sale:
+                raise ValueError("Sale not found")
+            db.delete(sale)
+            db.commit()
+            return {"message": f"Sale {sale_id} successfully deleted"}
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise ValueError(f"Failed to delete sale {sale_id}: {e}")
 
-        if customer.wallet_balance < item.price:
-            raise ValueError("Insufficient funds")
-
-        item.stock_count -= 1
-        customer.wallet_balance -= item.price
-
-        new_sale = Sale(
-            customer_id=customer.id,
-            item_id=item.id,
-            amount=item.price,
-        )
-        db.add(new_sale)
-
-        db.commit()
-        db.refresh(new_sale)
-
-        return {
-            "sale_id": new_sale.id,
-            "customer_username": customer.username,
-            "item_name": item.name,
-            "amount": new_sale.amount,
-        }
+    @profile
+    def update_sale(self, db: Session, sale_id: int, updates: dict):
+        try:
+            sale = db.query(Sale).filter(Sale.id == sale_id).first()
+            if not sale:
+                raise ValueError("Sale not found")
+            for key, value in updates.items():
+                setattr(sale, key, value)
+            db.commit()
+            db.refresh(sale)
+            return sale
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise ValueError(f"Failed to update sale {sale_id}: {e}")

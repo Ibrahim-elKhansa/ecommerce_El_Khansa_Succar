@@ -6,8 +6,8 @@ app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
-app.include_router(sales_router, prefix="/api")
+app.include_router(sales_router, prefix="/api", tags=["Sales"])
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app_services:app", host="127.0.0.1", port=8002, reload=True)
+    uvicorn.run("app_sales:app", host="127.0.0.1", port=8002, reload=True)

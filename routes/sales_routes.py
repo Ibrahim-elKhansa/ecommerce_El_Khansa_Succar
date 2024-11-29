@@ -1,26 +1,39 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from models.sales import Item, Sale, Customer
 from services.sales_service import SalesService
 
 router = APIRouter()
 sales_service = SalesService()
 
-@router.get("/sales/goods")
-def display_goods(db: Session = Depends(get_db)):
-    return sales_service.display_goods(db)
-
-@router.get("/sales/goods/{item_id}")
-def get_good_details(item_id: int, db: Session = Depends(get_db)):
+@router.post("/sales")
+def create_sale(data: dict, db: Session = Depends(get_db)):
     try:
-        return sales_service.get_good_details(db, item_id)
+        new_sale = sales_service.create_sale(db, data)
+        return {"message": "Sale created successfully", "sale": new_sale}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/sales/customer/{customer_id}")
+def get_sales_by_customer(customer_id: int, db: Session = Depends(get_db)):
+    return sales_service.get_sales_by_customer(db, customer_id)
+
+@router.get("/sales/item/{item_id}")
+def get_sales_by_item(item_id: int, db: Session = Depends(get_db)):
+    return sales_service.get_sales_by_item(db, item_id)
+
+@router.delete("/sales/{sale_id}")
+def delete_sale(sale_id: int, db: Session = Depends(get_db)):
+    try:
+        sales_service.delete_sale(db, sale_id)
+        return {"message": "Sale deleted successfully"}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.post("/sales/{username}")
-def process_sale(username: str, item_id: int, db: Session = Depends(get_db)):
+@router.put("/sales/{sale_id}")
+def update_sale(sale_id: int, updates: dict, db: Session = Depends(get_db)):
     try:
-        return sales_service.process_sale(db, username, item_id)
+        updated_sale = sales_service.update_sale(db, sale_id, updates)
+        return {"message": "Sale updated successfully", "sale": updated_sale}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e))
