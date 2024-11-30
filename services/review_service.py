@@ -44,17 +44,24 @@ class ReviewService:
     @profile
     def get_customer_reviews(self, db: Session, customer_id: int):
         return db.query(Review).filter(Review.customer_id == customer_id).all()
-
+    
     @profile
     def moderate_review(self, db: Session, review_id: int, status: str):
+        """Moderate a review: Approve or Reject."""
         review = db.query(Review).filter(Review.id == review_id).first()
         if not review:
             raise ValueError("Review not found")
-
-        review.moderated = status  # Set to Approved or Rejected
+        if status not in ["Approved", "Rejected"]:
+            raise ValueError("Invalid moderation status")
+        review.moderation_status = status
         db.commit()
         db.refresh(review)
         return review
+
+    @profile
+    def get_pending_reviews(self, db: Session):
+        """Fetch reviews that are pending moderation."""
+        return db.query(Review).filter(Review.moderation_status == "Pending").all()
     
 if __name__ == "__main__":
     from database import SessionLocal

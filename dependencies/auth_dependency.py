@@ -3,6 +3,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 from datetime import datetime
 from typing import Optional
+from models.customer import Customer
+from sqlalchemy.orm import Session
+from database import get_db
 
 SECRET_KEY = "bobandomar"
 ALGORITHM = "HS256"
@@ -31,3 +34,14 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Security(securi
     if not payload or "sub" not in payload:
         raise HTTPException(status_code=401, detail="Invalid token payload")
     return payload
+
+def require_admin(
+    current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    """
+    Ensure the current user is an admin by querying the database.
+    """
+    user = db.query(Customer).filter(Customer.username == current_user["sub"]).first()
+    if not user or not user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    return user

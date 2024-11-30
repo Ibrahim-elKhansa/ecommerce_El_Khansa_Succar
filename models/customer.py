@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, Boolean
 from database import Base
 
 class Customer(Base):
@@ -13,3 +13,4 @@ class Customer(Base):
     gender = Column(String, nullable=False)
     marital_status = Column(String, nullable=False)
     wallet_balance = Column(Float, default=0.0)
+    is_admin = Column(Boolean, default=False)

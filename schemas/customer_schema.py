@@ -3,6 +3,7 @@ from pydantic import BaseModel
 class CustomerBase(BaseModel):
     username: str
     wallet_balance: float
+    is_admin: bool = False 
 
     class Config:
         orm_mode = True
