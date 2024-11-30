@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from models.sales import Sale
 from sqlalchemy.exc import SQLAlchemyError
+from memory_profiler import profile
+import time
 
 try:
     from line_profiler import profile
@@ -66,3 +68,48 @@ class SalesService:
         except SQLAlchemyError as e:
             db.rollback()
             raise ValueError(f"Failed to update sale {sale_id}: {e}")
+if __name__ == "__main__":
+    from database import SessionLocal
+
+    # Create a database session
+    db = SessionLocal()
+    service = SalesService()
+
+    # Sample data for testing
+    sample_sale = {
+        "customer_id": 1,
+        "item_id": 2,
+        "amount": 100.0
+    }
+
+    # Test create_sale
+    print("Creating a sale...")
+    created_sale = service.create_sale(db, sample_sale)
+    print(f"Created sale ID: {created_sale.id}")
+
+    # Test get_sales_by_customer
+    print(f"Fetching sales for customer ID {sample_sale['customer_id']}...")
+    customer_sales = service.get_sales_by_customer(db, sample_sale["customer_id"])
+    print(f"Sales for customer ID {sample_sale['customer_id']}: {customer_sales}")
+
+    # Test get_sales_by_item
+    print(f"Fetching sales for item ID {sample_sale['item_id']}...")
+    item_sales = service.get_sales_by_item(db, sample_sale["item_id"])
+    print(f"Sales for item ID {sample_sale['item_id']}: {item_sales}")
+
+    # Test update_sale
+    print(f"Updating sale ID {created_sale.id}...")
+    updated_sale = service.update_sale(
+        db,
+        created_sale.id,
+        {"amount": 150.0}
+    )
+    print(f"Updated sale: {updated_sale}")
+
+    # Test delete_sale
+    print(f"Deleting sale ID {created_sale.id}...")
+    delete_response = service.delete_sale(db, created_sale.id)
+    print(delete_response)
+
+    db.close()
+    time.sleep(5)

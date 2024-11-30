@@ -55,3 +55,49 @@ class ReviewService:
         db.commit()
         db.refresh(review)
         return review
+    
+if __name__ == "__main__":
+    from database import SessionLocal
+
+    # Initialize database session and service
+    db = SessionLocal()
+    service = ReviewService()
+
+    @profile
+    def test_review_service():
+        # Submitting a review
+        print("Submitting a review...")
+        created_review = service.submit_review(db, {
+            "product_id": 1,
+            "customer_id": 2,
+            "rating": 5,
+            "comment": "Great product!"
+        })
+        print(f"Created review: {created_review}")
+
+        # Fetch product reviews
+        print("Fetching product reviews...")
+        print(service.get_product_reviews(db, 1))
+
+        # Fetch customer reviews
+        print("Fetching customer reviews...")
+        print(service.get_customer_reviews(db, 2))
+
+        # Update review
+        print("Updating review...")
+        print(service.update_review(db, created_review.id, {
+            "rating": 4,
+            "comment": "Updated comment"
+        }))
+
+        # Moderate review
+        print("Moderating review...")
+        print(service.moderate_review(db, created_review.id, "Approved"))
+
+        # Delete review
+        print("Deleting review...")
+        service.delete_review(db, created_review.id)
+        print(f"Deleted review ID: {created_review.id}")
+
+    test_review_service()
+    db.close()
