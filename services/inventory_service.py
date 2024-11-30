@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from models.inventory import Item
 from memory_profiler import profile
+from database import SessionLocal
 
 class InventoryService:
     @profile
@@ -61,3 +62,46 @@ class InventoryService:
     def delete_all_items(self, db: Session):
         db.query(Item).delete()
         db.commit()
+
+
+if __name__ == "__main__":
+    # Create a database session
+    db = SessionLocal()
+    service = InventoryService()
+
+    # Sample data for testing
+    sample_item = {
+        "name": "Test Item",
+        "category": "Test Category",
+        "price": 10.0,
+        "description": "Sample description",
+        "stock_count": 5
+    }
+
+    # Test create_item
+    print("Creating an item...")
+    created_item = service.create_item(db, sample_item)
+
+    # Test get_all_items
+    print("Fetching all items...")
+    all_items = service.get_all_items(db)
+
+    # Test get_item_details
+    print(f"Fetching details of item ID {created_item.id}...")
+    item_details = service.get_item_details(db, created_item.id)
+
+    # Test update_item
+    print(f"Updating item ID {created_item.id}...")
+    updated_item = service.update_item(
+        db,
+        created_item.id,
+        {"name": "Updated Item", "price": 15.0}
+    )
+
+    # Test deduct_item
+    print(f"Deducting stock from item ID {created_item.id}...")
+    deducted_item = service.deduct_item(db, created_item.id)
+
+    # Test delete_all_items
+    print("Deleting all items...")
+    service.delete_all_items(db)

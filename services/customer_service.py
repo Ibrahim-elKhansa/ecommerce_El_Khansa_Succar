@@ -53,3 +53,57 @@ def deduct_wallet(db: Session, username: str, amount: float):
         db.commit()
         db.refresh(customer)
     return customer
+if __name__ == "__main__":
+    from database import SessionLocal
+
+    # Create a database session
+    db = SessionLocal()
+
+    # Sample data for testing
+    sample_customer = {
+        "full_name": "John Doe",
+        "username": "johndoe",
+        "password": "securepassword",
+        "age": 30,  # Mandatory field
+        "address": "123 Main Street",  # Mandatory field
+        "gender": "Male",  # Mandatory field
+        "marital_status": "Single",  # Mandatory field
+        "wallet_balance": 100.0  # Optional field
+    }
+
+    # Create customer
+    print("Creating a customer...")
+    created_customer = create_customer(db, sample_customer)
+    print(f"Created customer: {created_customer}")
+
+    # Retrieve customer by username
+    print("Fetching customer by username...")
+    fetched_customer = get_customer_by_username(db, "johndoe")
+    print(f"Fetched customer: {fetched_customer}")
+
+    # Retrieve all customers
+    print("Fetching all customers...")
+    all_customers = get_all_customers(db)
+    print(f"All customers: {all_customers}")
+
+    # Update customer
+    print("Updating customer...")
+    updated_customer = update_customer(db, "johndoe", {"address": "456 Elm Street", "wallet_balance": 150.0})
+    print(f"Updated customer: {updated_customer}")
+
+    # Charge wallet
+    print("Charging wallet...")
+    charged_customer = charge_wallet(db, "johndoe", 50.0)
+    print(f"Charged wallet: {charged_customer}")
+
+    # Deduct wallet
+    print("Deducting wallet...")
+    deducted_customer = deduct_wallet(db, "johndoe", 20.0)
+    print(f"Deducted wallet: {deducted_customer}")
+
+    # Delete customer
+    print("Deleting customer...")
+    delete_customer(db, "johndoe")
+    print("Customer deleted.")
+
+    db.close()
