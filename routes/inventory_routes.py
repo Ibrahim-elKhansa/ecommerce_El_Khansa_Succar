@@ -1,21 +1,32 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models.inventory import Item
-from services.inventory_service import InventoryService
 from database import get_db
+from services.inventory_service import InventoryService
+from dependencies.auth_dependency import get_current_user
 
 router = APIRouter()
 inventory_service = InventoryService()
 
-@router.post("/inventory")
-def add_item(item_data: dict, db: Session = Depends(get_db)):
+@router.get("/items", dependencies=[Depends(get_current_user)])
+def get_all_items(db: Session = Depends(get_db)):
+    return inventory_service.get_all_items(db)
+
+@router.get("/items/{item_id}", dependencies=[Depends(get_current_user)])
+def get_item(item_id: int, db: Session = Depends(get_db)):
+    item = inventory_service.get_item(db, item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
+
+@router.post("/items", dependencies=[Depends(get_current_user)])
+def create_item(data: dict, db: Session = Depends(get_db)):
     try:
-        new_item = inventory_service.create_item(db, item_data)
-        return {"message": "Item added successfully", "item": new_item}
+        new_item = inventory_service.create_item(db, data)
+        return {"message": "Item created successfully", "item": new_item}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.put("/inventory/{item_id}")
+@router.put("/items/{item_id}", dependencies=[Depends(get_current_user)])
 def update_item(item_id: int, updates: dict, db: Session = Depends(get_db)):
     try:
         updated_item = inventory_service.update_item(db, item_id, updates)
@@ -23,34 +34,10 @@ def update_item(item_id: int, updates: dict, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.post("/inventory/{item_id}/deduct")
-def deduct_item(item_id: int, db: Session = Depends(get_db)):
+@router.delete("/items/{item_id}", dependencies=[Depends(get_current_user)])
+def delete_item(item_id: int, db: Session = Depends(get_db)):
     try:
-        inventory_service.deduct_item(db, item_id)
-        return {"message": "Item deducted successfully"}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@router.get("/inventory")
-def list_items(db: Session = Depends(get_db)):
-    items = inventory_service.get_all_items(db)
-    return items
-
-@router.get("/inventory/{item_id}")
-def get_item_details(item_id: int, db: Session = Depends(get_db)):
-    try:
-        item = inventory_service.get_item_details(db, item_id)
-        return item
+        inventory_service.delete_item(db, item_id)
+        return {"message": "Item deleted successfully"}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
-
-@router.delete("/inventory/all")
-def delete_all_items(db: Session = Depends(get_db)):
-    """
-    Deletes all items from the inventory. Useful for cleanup during testing.
-    """
-    try:
-        inventory_service.delete_all_items(db)
-        return {"message": "All items deleted successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
