@@ -22,6 +22,19 @@ sales_service = SalesService()
 
 @router.post("/sales", dependencies=[Depends(get_current_user)])
 def create_sale(data: dict, db: Session = Depends(get_db)):
+    """
+    Create a new sale record.
+
+    Args:
+        data (dict): The sale data including customer ID, item ID, and sale amount.
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: A success message and the created sale record.
+
+    Raises:
+        HTTPException: If the sale creation fails.
+    """
     logging.info(f"POST /sales - Data: {data}")
     try:
         new_sale = sales_service.create_sale(db, data)
@@ -33,6 +46,19 @@ def create_sale(data: dict, db: Session = Depends(get_db)):
 
 @router.get("/sales/customer/{customer_id}", dependencies=[Depends(get_current_user)])
 def get_sales_by_customer(customer_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve sales for a specific customer.
+
+    Args:
+        customer_id (int): The ID of the customer.
+        db (Session): The database session dependency.
+
+    Returns:
+        list: A list of sales records associated with the customer.
+
+    Raises:
+        HTTPException: If no sales records are found for the customer.
+    """
     logging.info(f"GET /sales/customer/{customer_id}")
     sales = sales_service.get_sales_by_customer(db, customer_id)
     logging.info(f"Sales retrieved for customer_id={customer_id}: {len(sales)} sales")
@@ -40,6 +66,19 @@ def get_sales_by_customer(customer_id: int, db: Session = Depends(get_db)):
 
 @router.get("/sales/item/{item_id}", dependencies=[Depends(get_current_user)])
 def get_sales_by_item(item_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve sales for a specific item.
+
+    Args:
+        item_id (int): The ID of the item.
+        db (Session): The database session dependency.
+
+    Returns:
+        list: A list of sales records associated with the item.
+
+    Raises:
+        HTTPException: If no sales records are found for the item.
+    """
     logging.info(f"GET /sales/item/{item_id}")
     sales = sales_service.get_sales_by_item(db, item_id)
     logging.info(f"Sales retrieved for item_id={item_id}: {len(sales)} sales")
@@ -47,6 +86,19 @@ def get_sales_by_item(item_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/sales/{sale_id}", dependencies=[Depends(get_current_user)])
 def delete_sale(sale_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a specific sale record.
+
+    Args:
+        sale_id (int): The ID of the sale record to delete.
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: A success message confirming the sale deletion.
+
+    Raises:
+        HTTPException: If the sale record is not found or deletion fails.
+    """
     logging.info(f"DELETE /sales/{sale_id}")
     try:
         sales_service.delete_sale(db, sale_id)
@@ -58,6 +110,20 @@ def delete_sale(sale_id: int, db: Session = Depends(get_db)):
 
 @router.put("/sales/{sale_id}", dependencies=[Depends(get_current_user)])
 def update_sale(sale_id: int, updates: dict, db: Session = Depends(get_db)):
+    """
+    Update an existing sale record.
+
+    Args:
+        sale_id (int): The ID of the sale record to update.
+        updates (dict): The fields to update in the sale record.
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: A success message and the updated sale record.
+
+    Raises:
+        HTTPException: If the sale record is not found or the update fails.
+    """
     logging.info(f"PUT /sales/{sale_id} - Updates: {updates}")
     try:
         updated_sale = sales_service.update_sale(db, sale_id, updates)
