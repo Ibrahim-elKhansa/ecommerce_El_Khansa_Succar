@@ -1,0 +1,55 @@
+services:
+  app_customer:
+    build:
+      context: .
+      dockerfile: ./app_customer/Dockerfile
+    container_name: app_customer
+    ports:
+      - "8001:8001"
+    depends_on:
+      - database
+
+  app_inventory:
+    build:
+      context: .
+      dockerfile: ./app_inventory/Dockerfile
+    container_name: app_inventory
+    ports:
+      - "8002:8002"
+    depends_on:
+      - database
+
+  app_review:
+    build:
+      context: .
+      dockerfile: ./app_review/Dockerfile
+    container_name: app_review
+    ports:
+      - "8003:8003"
+    depends_on:
+      - database
+
+  app_sales:
+    build:
+      context: .
+      dockerfile: ./app_sales/Dockerfile
+    container_name: app_sales
+    ports:
+      - "8004:8004"
+    depends_on:
+      - database
+
+  database:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

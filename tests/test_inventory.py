@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from decouple import config
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from app_inventory import app
+from app_inventory.app_inventory import app
 
 client = TestClient(app)
 
