@@ -3,7 +3,10 @@ from models.sales import Sale
 from sqlalchemy.exc import SQLAlchemyError
 from memory_profiler import profile
 import time
+import pybreaker
+import requests
 
+circuit_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=30)
 try:
     from line_profiler import profile
 except ImportError:
@@ -11,7 +14,16 @@ except ImportError:
         return func
 
 
+
 class SalesService:
+    @circuit_breaker
+    def call_sales_api(self, endpoint: str, data: dict):
+        try:
+            response = requests.post(f"http://127.0.0.1:8002/api/", json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            raise Exception(f"Failed to call sales API: {e}")
     def __init__(self):
         pass
 

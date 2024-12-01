@@ -2,8 +2,21 @@ from sqlalchemy.orm import Session
 from models.inventory import Item
 from memory_profiler import profile
 from database import SessionLocal
+import pybreaker
+import requests
+
+circuit_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=30)
+
 
 class InventoryService:
+    @circuit_breaker
+    def call_inventory_api(self, endpoint: str, data: dict):
+        try:
+            response = requests.post(f"http://127.0.0.1:8001/api/", json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            raise Exception(f"Failed to call inventory API: {e}")
     @profile
     def create_item(self, db: Session, data: dict):
         if not data.get("name") or not data.get("stock_count"):

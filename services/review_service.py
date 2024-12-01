@@ -1,8 +1,20 @@
 from sqlalchemy.orm import Session
 from models.review import Review
 from memory_profiler import profile
+import pybreaker
+import requests
+
+circuit_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=30)
 
 class ReviewService:
+    @circuit_breaker
+    def call_review_api(self, endpoint: str, data: dict):
+        try:
+            response = requests.post(f"http://127.0.0.1:8003/api/", json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            raise Exception(f"Failed to call review API: {e}")
     @profile
     def submit_review(self, db: Session, data: dict):
         new_review = Review(

@@ -1,8 +1,20 @@
 from sqlalchemy.orm import Session
 from models.customer import Customer
-from memory_profiler import profile  # Import for memory profiling
+from memory_profiler import profile
+import pybreaker
+import requests
+
+circuit_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=30)
 
 class CustomerService:
+    @circuit_breaker
+    def call_customer_api(self, endpoint: str, data: dict):
+        try:
+            response = requests.post(f"http://127.0.0.1:8000/api/", json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            raise Exception(f"Failed to call customer API: {e}")
     @profile
     def create_customer(self, db: Session, customer_data: dict):
         new_customer = Customer(**customer_data)
