@@ -4,6 +4,67 @@ from memory_profiler import profile
 import pybreaker
 import requests
 
+"""
+Customer Service Module
+=======================
+
+This module provides a service class for managing customer-related operations,
+including database interactions and API calls. The `CustomerService` class
+defines methods for creating, retrieving, updating, and deleting customer data,
+as well as managing customer wallet balances.
+
+Features
+--------
+
+- **Customer Management**:
+  - Create, retrieve, update, and delete customer records.
+  - Fetch customers by username or retrieve all customers.
+
+- **Wallet Management**:
+  - Charge or deduct amounts from customer wallets.
+
+- **API Integration**:
+  - Use a circuit breaker pattern to handle customer-related API calls.
+
+Dependencies
+------------
+
+- **Database**:
+  Uses SQLAlchemy to interact with the `Customer` model.
+
+- **Memory Profiling**:
+  Uses `memory_profiler` to profile memory usage in service methods.
+
+- **Circuit Breaker**:
+  Uses `pybreaker` to handle API calls with a fault-tolerant approach.
+
+Classes
+-------
+
+- **CustomerService**:
+  A service class that provides methods for managing customer operations.
+
+    Methods:
+        - `call_customer_api(endpoint: str, data: dict) -> dict`:
+            Makes a customer-related API call.
+        - `create_customer(db: Session, customer_data: dict) -> Customer`:
+            Creates a new customer in the database.
+        - `get_customer_by_username(db: Session, username: str) -> Customer`:
+            Retrieves a customer by their username.
+        - `get_all_customers(db: Session) -> list[Customer]`:
+            Retrieves all customer records.
+        - `update_customer(db: Session, username: str, updates: dict) -> Customer`:
+            Updates customer information.
+        - `delete_customer(db: Session, username: str) -> Customer`:
+            Deletes a customer by their username.
+        - `charge_wallet(db: Session, username: str, amount: float) -> Customer`:
+            Charges a customer's wallet with a specified amount.
+        - `deduct_wallet(db: Session, username: str, amount: float) -> Customer`:
+            Deducts a specified amount from a customer's wallet.
+
+"""
+
+
 circuit_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=30)
 
 class CustomerService:

@@ -8,6 +8,58 @@ from dependencies.auth_dependency import get_current_user
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
+"""
+Sales Routes
+============
+
+This module defines the API routes for managing sales in the system.
+
+Features
+--------
+
+- **Sales Management**:
+  - Create new sales records.
+  - Retrieve sales by customer or item.
+  - Update existing sales records.
+  - Delete specific sales records.
+
+- **Logging**:
+  - Logs all sales-related operations for auditing and debugging.
+
+- **Dependencies**:
+  - Utilizes `SalesService` for handling sales-related business logic.
+  - Requires authenticated users for all operations.
+
+- **Request Throttling**:
+  - Implements throttling using `SlowAPI` to limit excessive API calls.
+
+Routes
+------
+
+- **POST /sales**:
+  Create a new sale record.
+- **GET /sales/customer/{customer_id}**:
+  Retrieve all sales records for a specific customer.
+- **GET /sales/item/{item_id}**:
+  Retrieve all sales records for a specific item.
+- **DELETE /sales/{sale_id}**:
+  Delete a specific sale record by ID.
+- **PUT /sales/{sale_id}**:
+  Update a specific sale record by ID.
+
+Dependencies
+------------
+
+- **Database**:
+  Utilizes SQLAlchemy sessions for database transactions through the `get_db` dependency.
+- **Authentication**:
+  Ensures only authenticated users can access sales operations using the `get_current_user` dependency.
+- **SalesService**:
+  Handles the core business logic for all sales-related operations.
+
+"""
+
+
 # Set up logging
 os.makedirs("logs", exist_ok=True)  # Ensure logs directory exists
 logging.basicConfig(

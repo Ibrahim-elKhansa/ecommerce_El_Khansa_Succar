@@ -8,6 +8,61 @@ from dependencies.auth_dependency import get_current_user
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
+"""
+Inventory Routes
+================
+
+This module defines the API routes for managing inventory operations.
+
+Features
+--------
+
+- **Inventory Management**:
+  - Retrieve all inventory items or specific items by their ID.
+  - Create, update, and delete inventory items.
+  - Deduct stock from an item.
+  - Delete all items from the inventory.
+
+- **Logging**:
+  - Logs all requests, responses, and errors for debugging and monitoring purposes.
+
+- **Dependencies**:
+  - Uses `InventoryService` for handling business logic related to inventory operations.
+  - Requires authenticated users for all routes through dependency injection.
+
+- **Throttling**:
+  - Implements request throttling using `SlowAPI` to limit excessive API usage.
+
+Routes
+------
+
+- **GET /items**:
+  Retrieve all items in the inventory.
+- **GET /items/{item_id}**:
+  Retrieve a specific item by its ID.
+- **POST /items**:
+  Create a new item in the inventory.
+- **PUT /items/{item_id}**:
+  Update an existing inventory item.
+- **POST /items/{item_id}/deduct**:
+  Deduct stock from a specific item.
+- **DELETE /items/{item_id}**:
+  Delete an inventory item by ID.
+- **DELETE /items**:
+  Delete all items in the inventory.
+
+Dependencies
+------------
+
+- **Database**: 
+  Utilizes SQLAlchemy session management for CRUD operations via the `get_db` dependency.
+- **Authentication**: 
+  Ensures that all operations are accessible only to authenticated users via the `get_current_user` dependency.
+- **InventoryService**:
+  Handles the core business logic for inventory-related operations.
+"""
+
+
 # Set up logging
 os.makedirs("logs", exist_ok=True)  # Ensure logs directory exists
 logging.basicConfig(

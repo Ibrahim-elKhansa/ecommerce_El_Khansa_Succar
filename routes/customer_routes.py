@@ -8,6 +8,58 @@ from dependencies.auth_dependency import get_current_user
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
+"""
+Customer Routes
+===============
+
+This module defines the API routes for managing customer-related operations.
+
+Main Features
+-------------
+- **Customer Management**: 
+  - Create, retrieve, update, and delete customer records.
+  - Retrieve all customers or specific customers by username.
+- **Wallet Operations**:
+  - Charge a customer's wallet with a specified amount.
+  - Deduct an amount from a customer's wallet.
+- **Logging**:
+  - Logs all operations and errors for debugging and auditing purposes.
+- **Dependencies**:
+  - Ensures that only authenticated users can access these routes.
+  - Uses database session management for performing CRUD operations.
+
+Dependencies
+------------
+- **CustomerService**:
+  - The service layer that contains the business logic for customer operations.
+- **Auth Dependencies**:
+  - `get_current_user` ensures that only authenticated users can access these endpoints.
+- **Database**:
+  - Uses SQLAlchemy for database session management and CRUD operations.
+
+Throttling
+----------
+- Implements request throttling using `SlowAPI` to limit the rate of incoming requests and prevent abuse.
+
+Routes Summary
+--------------
+- `POST /customers`:
+  - Create a new customer.
+- `GET /customers/{username}`:
+  - Retrieve a specific customer by username.
+- `GET /customers`:
+  - Retrieve all customers.
+- `PUT /customers/{username}`:
+  - Update a customer's information.
+- `DELETE /customers/{username}`:
+  - Delete a customer by username.
+- `POST /customers/{username}/charge`:
+  - Charge a customer's wallet.
+- `POST /customers/{username}/deduct`:
+  - Deduct an amount from a customer's wallet.
+"""
+
+
 os.makedirs("logs", exist_ok=True)  # Ensure logs directory exists
 logging.basicConfig(
     filename="logs/log_customer.log",

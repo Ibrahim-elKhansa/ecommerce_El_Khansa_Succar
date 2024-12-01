@@ -9,6 +9,65 @@ from pydantic import BaseModel
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
+"""
+Review Routes
+=============
+
+This module defines the API routes for managing reviews in the system.
+
+Features
+--------
+
+- **Review Management**:
+  - Submit, update, and delete reviews.
+  - Retrieve reviews by product or customer.
+  - Moderate reviews by approving or rejecting them.
+  - Fetch all reviews pending moderation.
+
+- **Logging**:
+  - Logs all review-related operations for monitoring and debugging.
+
+- **Dependencies**:
+  - Utilizes `ReviewService` for handling review-related business logic.
+  - Requires authenticated users for review operations.
+  - Requires admin privileges for review moderation and fetching pending reviews.
+
+- **Request Throttling**:
+  - Implements request throttling using `SlowAPI` to prevent excessive API usage.
+
+Routes
+------
+
+- **POST /reviews**:
+  Submit a new review.
+- **PUT /reviews/{review_id}**:
+  Update an existing review.
+- **DELETE /reviews/{review_id}**:
+  Delete a review by its ID.
+- **GET /reviews/product/{product_id}**:
+  Retrieve reviews for a specific product.
+- **GET /reviews/customer/{customer_id}**:
+  Retrieve reviews submitted by a specific customer.
+- **PUT /reviews/{review_id}/moderate**:
+  Approve or reject a review (admin only).
+- **GET /reviews/pending**:
+  Retrieve all reviews pending moderation (admin only).
+
+Dependencies
+------------
+
+- **Database**:
+  Leverages SQLAlchemy sessions for database transactions via the `get_db` dependency.
+- **Authentication**:
+  Ensures only authenticated users can access review operations through the `get_current_user` dependency.
+- **Admin Access**:
+  Restricts certain operations, like moderation, to administrators using the `require_admin` dependency.
+- **ReviewService**:
+  Handles the core logic for review-related operations.
+
+"""
+
+
 # Set up logging
 os.makedirs("logs", exist_ok=True)  # Ensure logs directory exists
 logging.basicConfig(

@@ -8,6 +8,59 @@ from sqlalchemy.orm import Session
 from schemas.customer_schema import CustomerResponse
 from decouple import config
 
+"""
+Authentication Service
+======================
+
+This module provides functionality for user authentication and token management.
+
+Features
+--------
+
+- **Token Management**:
+  - Generate JWT tokens with expiration times.
+  - Verify and decode JWT tokens.
+
+- **User Management**:
+  - Register new users in the database.
+  - Authenticate users and generate access tokens.
+
+Classes
+-------
+
+- **TokenData**:
+  A Pydantic model representing the token payload structure.
+
+- **AuthService**:
+  A service class for authentication and user management, containing methods for:
+  - Creating access tokens.
+  - Verifying tokens.
+  - Registering new users.
+  - Logging in users.
+
+Environment Variables
+---------------------
+
+- **SECRET_KEY**:
+  The secret key used to sign JWT tokens.
+- **ALGORITHM**:
+  The hashing algorithm used for JWT tokens (e.g., HS256).
+- **ACCESS_TOKEN_EXPIRE_MINUTES**:
+  The duration (in minutes) for which the access token is valid.
+
+Dependencies
+------------
+
+- **Database**:
+  Uses SQLAlchemy sessions to interact with the database.
+- **JWT**:
+  Utilizes the `jose` library for JWT token encoding and decoding.
+- **Pydantic**:
+  Validates the token data structure using `BaseModel`.
+
+"""
+
+
 SECRET_KEY = config("SECRET_KEY")
 ALGORITHM = config("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = config("ACCESS_TOKEN_EXPIRE_MINUTES", cast=int)
