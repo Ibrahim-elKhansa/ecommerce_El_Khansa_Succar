@@ -33,6 +33,10 @@ class InventoryService:
         db.commit()
         db.refresh(new_item)
         return new_item
+    
+    @profile
+    def get_item(self, db: Session, item_id: int):
+        return db.query(Item).filter(Item.id == item_id).first()
 
     @profile
     def update_item(self, db: Session, item_id: int, data: dict):

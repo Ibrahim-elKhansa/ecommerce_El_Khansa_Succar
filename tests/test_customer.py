@@ -1,46 +1,60 @@
-import sys
-import os
 import pytest
-from line_profiler import LineProfiler
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+import sys, os
 from fastapi.testclient import TestClient
+from decouple import config
+from line_profiler import LineProfiler
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app_customer import app
-from services.customer_service import (
-    create_customer,
-    charge_wallet,
-    deduct_wallet,
-    delete_customer,
-)
+from services.customer_service import CustomerService
 
 client = TestClient(app)
 
+# Load the admin token from .env
+ADMIN_TOKEN = config("ADMIN_TOKEN")
+
+# Add the Authorization header for all requests
+HEADERS = {"Authorization": f"Bearer {ADMIN_TOKEN}"}
+
 @pytest.fixture(scope="module")
 def setup_customer():
-    client.post("/api/customers", json={
-        "full_name": "John Doe",
-        "username": "johndoe",
-        "password": "securepassword",
-        "age": 30,
-        "address": "123 Main St",
-        "gender": "Male",
-        "marital_status": "Single"
-    })
+    """
+    Fixture to initialize test data for customer.
+    Cleans up and adds a test customer to the database before running tests.
+    """
+    client.delete("/api/customers/johndoe", headers=HEADERS)
+    response = client.post(
+        "/api/customers",
+        json={
+            "full_name": "John Doe",
+            "username": "johndoe",
+            "password": "securepassword",
+            "age": 30,
+            "address": "123 Main St",
+            "gender": "Male",
+            "marital_status": "Single",
+        },
+        headers=HEADERS,
+    )
+    assert response.status_code == 200
     yield
 
 def test_register_customer(setup_customer):
-    response = client.get("/api/customers/johndoe")
+    response = client.get("/api/customers/johndoe", headers=HEADERS)
     assert response.status_code == 200
     assert response.json()["username"] == "johndoe"
 
 def test_charge_customer(setup_customer):
-    # Add line profiling
     lp = LineProfiler()
-    lp.add_function(charge_wallet.__wrapped__)  # Use the wrapped function
+    lp.add_function(CustomerService.charge_wallet)
 
     @lp
     def execute():
-        response = client.post("/api/customers/johndoe/charge", json={"amount": 100.0})
+        response = client.post(
+            "/api/customers/johndoe/charge",
+            json={"amount": 100.0},  # Wrap the amount in a dictionary
+            headers=HEADERS,
+        )
         assert response.status_code == 200
         assert response.json()["wallet_balance"] == 100.0
 
@@ -48,13 +62,16 @@ def test_charge_customer(setup_customer):
     lp.print_stats()
 
 def test_deduct_customer(setup_customer):
-    # Add line profiling
     lp = LineProfiler()
-    lp.add_function(deduct_wallet.__wrapped__)  # Use the wrapped function
+    lp.add_function(CustomerService.deduct_wallet)
 
     @lp
     def execute():
-        response = client.post("/api/customers/johndoe/deduct", json={"amount": 50.0})
+        response = client.post(
+            "/api/customers/johndoe/deduct",
+            json={"amount": 50.0},  # Wrap the amount in a dictionary
+            headers=HEADERS,
+        )
         assert response.status_code == 200
         assert response.json()["wallet_balance"] == 50.0
 
@@ -62,19 +79,17 @@ def test_deduct_customer(setup_customer):
     lp.print_stats()
 
 def test_delete_customer(setup_customer):
-    # Add line profiling
     lp = LineProfiler()
-    lp.add_function(delete_customer.__wrapped__)  # Use the wrapped function
+    lp.add_function(CustomerService.delete_customer)
 
     @lp
     def execute():
-        # Delete the user
-        response = client.delete("/api/customers/johndoe")
+        response = client.delete("/api/customers/johndoe", headers=HEADERS)
         assert response.status_code == 200
         assert response.json()["message"] == "Customer deleted successfully"
 
-        # Verify the user is deleted
-        response = client.get("/api/customers/johndoe")
+        # Verify the customer is deleted
+        response = client.get("/api/customers/johndoe", headers=HEADERS)
         assert response.status_code == 404
         assert response.json()["detail"] == "Customer not found"
 
