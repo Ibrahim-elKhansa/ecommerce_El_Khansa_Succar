@@ -32,7 +32,7 @@ def submit_review(data: dict, db: Session = Depends(get_db)):
         logging.error(f"Error submitting review: {e}")
         raise HTTPException(status_code=422, detail=str(e))
 
-@router.put("/reviews/{review_id}", dependencies=[Depends(get_current_user), Depends(limiter.limit("10/minute"))])
+@router.put("/reviews/{review_id}", dependencies=[Depends(get_current_user)])
 def update_review(review_id: int, updates: dict, db: Session = Depends(get_db)):
     logging.info(f"PUT /reviews/{review_id} - Updates: {updates}")
     try:
@@ -77,7 +77,7 @@ def moderate_review_route(review_id: int, request: ReviewModerationRequest, db: 
     try:
         result = review_service.moderate_review(db, review_id, request.status)
         logging.info(f"Review moderated: {result}")
-        return result
+        return {"message": "Review moderated successfully", "review": result}
     except ValueError as e:
         logging.error(f"Error moderating review {review_id}: {e}")
         raise HTTPException(status_code=400, detail=str(e))
