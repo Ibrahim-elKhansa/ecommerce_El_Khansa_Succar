@@ -22,6 +22,12 @@ def cleanup_inventory():
     client.delete("/api/items", headers=HEADERS)
 
 def test_add_item():
+    """
+    Test adding a new item to the inventory.
+
+    - Verifies that the item is created successfully.
+    - Checks that the item data matches the expected values.
+    """
     response = client.post(
         "/api/items",
         json={
@@ -38,6 +44,12 @@ def test_add_item():
     assert item["name"] == "New Item"
 
 def test_list_items():
+    """
+    Test listing all items in the inventory.
+
+    - Adds a sample item to the inventory.
+    - Verifies that the item appears in the list of all items.
+    """
     response = client.post(
         "/api/items",
         json={
@@ -56,6 +68,12 @@ def test_list_items():
     assert any(item["name"] == "Test Item" for item in items)
 
 def test_get_item_details():
+    """
+    Test retrieving details of a specific item.
+
+    - Adds a sample item to the inventory.
+    - Verifies that the details of the item match the expected values.
+    """
     response = client.post(
         "/api/items",
         json={
@@ -74,6 +92,12 @@ def test_get_item_details():
     assert item["name"] == "Test Item"
 
 def test_update_item():
+    """
+    Test updating an existing item's details.
+
+    - Adds a sample item to the inventory.
+    - Updates the item's details and verifies the changes.
+    """
     response = client.post(
         "/api/items",
         json={
@@ -102,6 +126,12 @@ def test_update_item():
     assert updated_item["name"] == "Updated Item"
 
 def test_deduct_item():
+    """
+    Test deducting stock from an item.
+
+    - Adds a sample item to the inventory.
+    - Deducts stock and verifies the response.
+    """
     response = client.post(
         "/api/items",
         json={
@@ -118,6 +148,13 @@ def test_deduct_item():
     assert response.status_code == 200
 
 def test_deduct_item_out_of_stock():
+    """
+    Test deducting stock from an item when stock is unavailable.
+
+    - Adds a sample item to the inventory with limited stock.
+    - Attempts to deduct stock beyond the available quantity.
+    - Verifies that the appropriate error message is returned.
+    """
     response = client.post(
         "/api/items",
         json={

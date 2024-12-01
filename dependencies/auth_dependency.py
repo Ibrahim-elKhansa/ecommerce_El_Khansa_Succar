@@ -16,7 +16,16 @@ security = HTTPBearer()
 
 def decode_jwt(token: str) -> dict:
     """
-    Decodes the JWT token and returns the payload if valid.
+    Decodes a JWT token and validates its payload.
+
+    Args:
+        token (str): The JWT token to decode.
+
+    Returns:
+        dict: Decoded JWT payload.
+
+    Raises:
+        HTTPException: If the token is invalid or expired.
     """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -31,7 +40,16 @@ def get_current_user(
     credentials: HTTPAuthorizationCredentials = Security(security),
 ) -> dict:
     """
-    Verifies the token and returns the user information from the payload.
+    Validates the authorization token and retrieves the current user.
+
+    Args:
+        credentials (HTTPAuthorizationCredentials): Bearer token credentials.
+
+    Returns:
+        dict: Payload containing user information.
+
+    Raises:
+        HTTPException: If the token is invalid or the payload is missing required data.
     """
     token = credentials.credentials
 
@@ -55,7 +73,17 @@ def require_admin(
     current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     """
-    Ensure the current user is an admin by querying the database or checking the static token.
+    Ensures the current user is an admin.
+
+    Args:
+        current_user (dict): The currently authenticated user data.
+        db (Session): Database session for querying user details.
+
+    Returns:
+        dict: The current user information if they are an admin.
+
+    Raises:
+        HTTPException: If the user is not an admin or is unauthorized.
     """
     # If the static admin token is used, it is already validated
     if current_user.get("role") == "admin":

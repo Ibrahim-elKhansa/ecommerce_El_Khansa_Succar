@@ -16,6 +16,13 @@ ADMIN_TOKEN = config("ADMIN_TOKEN")
 HEADERS = {"Authorization": f"Bearer {ADMIN_TOKEN}"}
 
 def test_create_sale():
+    """
+    Test creating a sale.
+
+    - Profiles the `client.post` method to evaluate performance.
+    - Sends a POST request to create a new sale.
+    - Verifies that the sale is successfully created with the correct details.
+    """
     lp = LineProfiler()
     lp.add_function(client.post)
     
@@ -32,6 +39,13 @@ def test_create_sale():
     lp.print_stats()
 
 def test_get_sales_by_customer():
+    """
+    Test retrieving sales for a specific customer.
+
+    - Profiles the `client.get` method to evaluate performance.
+    - Sends a GET request to fetch sales by customer ID.
+    - Verifies that the response contains a list of sales.
+    """
     lp = LineProfiler()
     lp.add_function(client.get)
 
@@ -45,6 +59,13 @@ def test_get_sales_by_customer():
     lp.print_stats()
 
 def test_get_sales_by_item():
+    """
+    Test retrieving sales for a specific item.
+
+    - Profiles the `client.get` method to evaluate performance.
+    - Sends a GET request to fetch sales by item ID.
+    - Verifies that the response contains a list of sales.
+    """
     lp = LineProfiler()
     lp.add_function(client.get)
 
@@ -58,6 +79,13 @@ def test_get_sales_by_item():
     lp.print_stats()
 
 def test_update_sale():
+    """
+    Test updating an existing sale.
+
+    - Profiles the `client.put` method to evaluate performance.
+    - Sends a PUT request to update the amount of a sale.
+    - Verifies that the sale details are updated correctly.
+    """
     lp = LineProfiler()
     lp.add_function(client.put)
 
@@ -72,6 +100,13 @@ def test_update_sale():
     lp.print_stats()
 
 def test_delete_sale():
+    """
+    Test deleting a sale.
+
+    - Profiles the `client.delete` method to evaluate performance.
+    - Sends a DELETE request to remove a specific sale.
+    - Verifies that the sale is deleted successfully with the appropriate message.
+    """
     lp = LineProfiler()
     lp.add_function(client.delete)
 

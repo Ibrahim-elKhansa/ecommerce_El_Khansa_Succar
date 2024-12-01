@@ -22,6 +22,15 @@ limiter = Limiter(key_func=get_remote_address)
 
 @router.get("/items", dependencies=[Depends(get_current_user)])
 def get_all_items(db: Session = Depends(get_db)):
+    """
+    Retrieve all items in the inventory.
+
+    Args:
+        db (Session): The database session dependency.
+
+    Returns:
+        list: A list of all inventory items.
+    """
     logging.info("GET /items")
     items = inventory_service.get_all_items(db)
     logging.info(f"All items retrieved: {len(items)} items")
@@ -29,6 +38,19 @@ def get_all_items(db: Session = Depends(get_db)):
 
 @router.get("/items/{item_id}", dependencies=[Depends(get_current_user)])
 def get_item(item_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a specific item by its ID.
+
+    Args:
+        item_id (int): The ID of the item to retrieve.
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: The retrieved item details.
+
+    Raises:
+        HTTPException: If the item is not found.
+    """
     logging.info(f"GET /items/{item_id}")
     item = inventory_service.get_item(db, item_id)
     if not item:
@@ -39,6 +61,19 @@ def get_item(item_id: int, db: Session = Depends(get_db)):
 
 @router.post("/items", dependencies=[Depends(get_current_user)])
 def create_item(data: dict, db: Session = Depends(get_db)):
+    """
+    Create a new item in the inventory.
+
+    Args:
+        data (dict): The data for the new item.
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: A message and the newly created item.
+
+    Raises:
+        HTTPException: If item creation fails.
+    """
     logging.info(f"POST /items - Data: {data}")
     try:
         new_item = inventory_service.create_item(db, data)
@@ -50,6 +85,20 @@ def create_item(data: dict, db: Session = Depends(get_db)):
 
 @router.put("/items/{item_id}", dependencies=[Depends(get_current_user)])
 def update_item(item_id: int, updates: dict, db: Session = Depends(get_db)):
+    """
+    Update an existing inventory item.
+
+    Args:
+        item_id (int): The ID of the item to update.
+        updates (dict): The data to update the item with.
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: A message and the updated item.
+
+    Raises:
+        HTTPException: If the update fails or the item is not found.
+    """
     logging.info(f"PUT /items/{item_id} - Updates: {updates}")
     try:
         updated_item = inventory_service.update_item(db, item_id, updates)
@@ -61,6 +110,19 @@ def update_item(item_id: int, updates: dict, db: Session = Depends(get_db)):
 
 @router.post("/items/{item_id}/deduct", dependencies=[Depends(get_current_user)])
 def deduct_item(item_id: int, db: Session = Depends(get_db)):
+    """
+    Deduct one stock unit from an item.
+
+    Args:
+        item_id (int): The ID of the item to deduct stock from.
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: A message and the updated item details.
+
+    Raises:
+        HTTPException: If the item is not found or stock is unavailable.
+    """
     logging.info(f"POST /items/{item_id}/deduct")
     try:
         updated_item = inventory_service.deduct_item(db, item_id)
@@ -75,6 +137,19 @@ def deduct_item(item_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/items/{item_id}", dependencies=[Depends(get_current_user)])
 def delete_item(item_id: int, db: Session = Depends(get_db)):
+    """
+    Delete an inventory item by ID.
+
+    Args:
+        item_id (int): The ID of the item to delete.
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: A message confirming the deletion.
+
+    Raises:
+        HTTPException: If the item is not found.
+    """
     logging.info(f"DELETE /items/{item_id}")
     try:
         inventory_service.delete_item(db, item_id)
@@ -86,6 +161,15 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/items", dependencies=[Depends(get_current_user)])
 def delete_all_items(db: Session = Depends(get_db)):
+    """
+    Delete all items in the inventory.
+
+    Args:
+        db (Session): The database session dependency.
+
+    Returns:
+        dict: A message confirming all items were deleted.
+    """
     logging.info("DELETE /items")
     inventory_service.delete_all_items(db)
     logging.info("All items deleted from inventory")

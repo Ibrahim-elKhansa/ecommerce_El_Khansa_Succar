@@ -40,11 +40,22 @@ def setup_customer():
     yield
 
 def test_register_customer(setup_customer):
+    """
+    Test retrieving a registered customer by username.
+    
+    - Verifies that the customer data matches the expected values.
+    """
     response = client.get("/api/customers/johndoe", headers=HEADERS)
     assert response.status_code == 200
     assert response.json()["username"] == "johndoe"
 
 def test_charge_customer(setup_customer):
+    """
+    Test charging the customer's wallet.
+
+    - Uses LineProfiler to measure performance of `charge_wallet`.
+    - Asserts that the wallet balance is updated correctly.
+    """
     lp = LineProfiler()
     lp.add_function(CustomerService.charge_wallet)
 
@@ -62,6 +73,12 @@ def test_charge_customer(setup_customer):
     lp.print_stats()
 
 def test_deduct_customer(setup_customer):
+    """
+    Test deducting from the customer's wallet.
+
+    - Uses LineProfiler to measure performance of `deduct_wallet`.
+    - Asserts that the wallet balance decreases correctly.
+    """
     lp = LineProfiler()
     lp.add_function(CustomerService.deduct_wallet)
 
@@ -79,6 +96,12 @@ def test_deduct_customer(setup_customer):
     lp.print_stats()
 
 def test_delete_customer(setup_customer):
+    """
+    Test deleting a customer by username.
+
+    - Uses LineProfiler to measure performance of `delete_customer`.
+    - Verifies that the customer no longer exists after deletion.
+    """
     lp = LineProfiler()
     lp.add_function(CustomerService.delete_customer)
 
