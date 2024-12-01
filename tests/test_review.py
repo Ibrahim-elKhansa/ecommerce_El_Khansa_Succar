@@ -51,7 +51,7 @@ def test_get_customer_reviews():
 
 def test_update_review():
     lp = LineProfiler()
-    lp.add_function(service.update_review.__wrapped__)  # Profile wrapped function
+    lp.add_function(service.update_review.__wrapped__)
 
     @lp
     def execute():
@@ -71,18 +71,23 @@ def test_update_review():
 
 def test_moderate_review():
     lp = LineProfiler()
-    lp.add_function(service.moderate_review.__wrapped__)  # Profile wrapped function
+    lp.add_function(service.moderate_review.__wrapped__)
 
     @lp
     def execute():
-        response = client.post(
-            "/api/reviews/1/moderate?status=Approved", headers=HEADERS
+        response = client.put(
+            "/api/reviews/1/moderate",
+            json={"status": "Approved"},
+            headers=HEADERS,
         )
+        print(response.json())
         assert response.status_code == 200
-        assert response.json()["review"]["moderated"] == "Approved"
+        print(response.json())
+        assert response.json()["review"]["moderation_status"] == "Approved"
 
     execute()
     lp.print_stats()
+
 
 def test_delete_review():
     lp = LineProfiler()

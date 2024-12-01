@@ -1,0 +1,67 @@
+2024-12-01 17:44:53,103 - INFO - GET /customers
+2024-12-01 17:44:53,888 - INFO - All customers retrieved: 0 customers
+2024-12-01 17:48:53,239 - INFO - GET /customers
+2024-12-01 17:48:54,016 - INFO - All customers retrieved: 0 customers
+2024-12-01 19:19:52,976 - INFO - POST /customers - Data: {'full_name': 'John Doe', 'username': 'johndoe', 'password': 'securepassword', 'age': 30, 'address': '123 Main St', 'gender': 'Male', 'marital_status': 'Single'}
+2024-12-01 19:19:53,735 - INFO - Customer created: <models.customer.Customer object at 0x000001C9F999F8F0>
+2024-12-01 19:22:10,190 - INFO - POST /customers - Data: {'full_name': 'Marry Jane', 'username': 'marryjane', 'password': '123123', 'age': 35, 'address': '456 Second St', 'gender': 'female', 'marital_status': 'Married'}
+2024-12-01 19:22:10,223 - INFO - Customer created: <models.customer.Customer object at 0x000001C9F99E2FC0>
+2024-12-01 19:22:13,383 - INFO - GET /customers
+2024-12-01 19:22:13,421 - INFO - All customers retrieved: 2 customers
+2024-12-01 19:23:14,432 - INFO - GET /customers/johndoe
+
+2024-12-01 19:23:14,495 - WARNING - Customer not found: johndoe
+
+2024-12-01 19:23:38,559 - INFO - GET /customers/johndoe
+
+2024-12-01 19:23:38,570 - WARNING - Customer not found: johndoe
+
+2024-12-01 19:23:42,443 - INFO - GET /customers
+2024-12-01 19:23:42,452 - INFO - All customers retrieved: 2 customers
+2024-12-01 19:24:22,888 - INFO - GET /customers/johndoe
+
+2024-12-01 19:24:22,909 - WARNING - Customer not found: johndoe
+
+2024-12-01 19:26:44,921 - INFO - GET /customers/johndoe
+
+2024-12-01 19:26:45,034 - WARNING - Customer not found: johndoe
+
+2024-12-01 19:27:04,469 - INFO - GET /customers/johndoe
+
+2024-12-01 19:27:04,993 - WARNING - Customer not found: johndoe
+
+2024-12-01 19:27:19,475 - INFO - GET /customers/johndoe
+
+2024-12-01 19:27:19,487 - WARNING - Customer not found: johndoe
+
+2024-12-01 19:27:34,638 - INFO - GET /customers/johndoe
+
+2024-12-01 19:27:35,090 - WARNING - Customer not found: johndoe
+
+2024-12-01 19:27:48,938 - INFO - GET /customers/johndoe
+
+2024-12-01 19:27:48,950 - WARNING - Customer not found: johndoe
+
+2024-12-01 19:29:10,059 - INFO - GET /customers/johndoe
+2024-12-01 19:29:11,148 - INFO - Customer retrieved: <models.customer.Customer object at 0x00000147B840D6A0>
+2024-12-01 19:30:02,845 - INFO - PUT /customers/johndoe
+ - Updates: {'address': '456 Elm St', 'age': 31}
+2024-12-01 19:30:03,719 - INFO - Customer updated: None
+2024-12-01 19:30:11,167 - INFO - GET /customers/johndoe
+2024-12-01 19:30:11,180 - INFO - Customer retrieved: <models.customer.Customer object at 0x000001B09BF4DEB0>
+2024-12-01 19:30:52,474 - INFO - GET /customers/johndoe
+2024-12-01 19:30:53,432 - INFO - Customer retrieved: <models.customer.Customer object at 0x0000016B70B61550>
+2024-12-01 19:30:56,440 - INFO - PUT /customers/johndoe - Updates: {'address': '456 Elm St', 'age': 31}
+2024-12-01 19:30:56,593 - INFO - Customer updated: <models.customer.Customer object at 0x0000016B70B625A0>
+2024-12-01 19:31:28,129 - INFO - DELETE /customers/johndoe
+2024-12-01 19:31:28,205 - INFO - Customer deleted: johndoe
+2024-12-01 19:32:54,639 - INFO - POST /customers - Data: {'full_name': 'John Doe', 'username': 'johndoe', 'password': 'securepassword', 'age': 30, 'address': '123 Main St', 'gender': 'Male', 'marital_status': 'Single'}
+2024-12-01 19:32:54,712 - INFO - Customer created: <models.customer.Customer object at 0x0000016B70B63E30>
+2024-12-01 19:35:49,413 - INFO - Wallet charged for johndoe: <models.customer.Customer object at 0x000002249F30DEB0>
+2024-12-01 19:36:04,794 - INFO - Wallet charged for johndoe: <models.customer.Customer object at 0x000002249F30F080>
+2024-12-01 19:36:51,022 - INFO - POST /customers/johndoe/deduct - Amount: 50.0
+2024-12-01 19:36:51,090 - INFO - Wallet deducted for customer johndoe: <models.customer.Customer object at 0x000002249F37C740>
+2024-12-01 19:37:06,861 - INFO - DELETE /customers/johndoe
+2024-12-01 19:37:06,924 - INFO - Customer deleted: johndoe
+2024-12-01 20:07:39,488 - INFO - GET /customers
+2024-12-01 20:07:40,181 - INFO - All customers retrieved: 2 customers

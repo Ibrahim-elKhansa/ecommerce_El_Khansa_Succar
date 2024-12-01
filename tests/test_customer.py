@@ -51,12 +51,12 @@ def test_charge_customer(setup_customer):
     @lp
     def execute():
         response = client.post(
-            "/api/customers/johndoe/charge",
-            json={"amount": 100.0},  # Wrap the amount in a dictionary
-            headers=HEADERS,
-        )
+    "/api/customers/johndoe/charge",
+    json={"amount": 100.0},
+    headers=HEADERS,
+)
         assert response.status_code == 200
-        assert response.json()["wallet_balance"] == 100.0
+        assert response.json()["customer"]["wallet_balance"] == 100.0
 
     execute()
     lp.print_stats()
@@ -69,11 +69,11 @@ def test_deduct_customer(setup_customer):
     def execute():
         response = client.post(
             "/api/customers/johndoe/deduct",
-            json={"amount": 50.0},  # Wrap the amount in a dictionary
+            json={"amount": 50.0},
             headers=HEADERS,
         )
         assert response.status_code == 200
-        assert response.json()["wallet_balance"] == 50.0
+        assert response.json()["customer"]["wallet_balance"] == 50.0
 
     execute()
     lp.print_stats()

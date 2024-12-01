@@ -7,12 +7,10 @@ from decouple import config
 from models.customer import Customer
 from database import get_db
 
-# Constants for JWT
 SECRET_KEY = config("SECRET_KEY")
 ALGORITHM = "HS256"
 ADMIN_TOKEN = config("ADMIN_TOKEN")
 
-# HTTPBearer for token authentication
 security = HTTPBearer()
 
 
@@ -42,10 +40,15 @@ def get_current_user(
         return {"sub": "admin", "role": "admin"}
 
     # Otherwise, proceed with normal JWT validation
-    payload = decode_jwt(token)
-    if not payload or "sub" not in payload:
-        raise HTTPException(status_code=401, detail="Invalid token payload")
-    return payload
+    try:
+        payload = decode_jwt(token)
+        if not payload or "sub" not in payload:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+        return payload
+    except JWTError as e:
+        if token == ADMIN_TOKEN:  # Re-check in case the exception occurs
+            return {"sub": "admin", "role": "admin"}
+        raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
 
 
 def require_admin(
