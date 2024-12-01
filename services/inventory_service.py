@@ -74,6 +74,18 @@ class InventoryService:
         if not item:
             raise ValueError("Item not found")
         return item
+    
+    @profile
+    def delete_item(self, db: Session, item_id: int):
+        """
+        Deletes a single item from the inventory by its ID.
+        """
+        item = db.query(Item).filter(Item.id == item_id).first()
+        if not item:
+            raise ValueError("Item not found")
+        db.delete(item)
+        db.commit()
+        return {"message": f"Item with ID {item_id} deleted successfully"}
 
     @profile
     def delete_all_items(self, db: Session):

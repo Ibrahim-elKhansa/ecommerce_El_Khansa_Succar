@@ -33,6 +33,7 @@ def create_customer_route(customer_data: dict, db: Session = Depends(get_db)):
 
 @router.get("/customers/{username}", dependencies=[Depends(get_current_user)])
 def get_customer_by_username(username: str, db: Session = Depends(get_db)):
+    username = username.strip()
     logging.info(f"GET /customers/{username}")
     customer = customer_service.get_customer_by_username(db, username)
     if not customer:
@@ -50,6 +51,7 @@ def get_all_customers_route(db: Session = Depends(get_db)):
 
 @router.put("/customers/{username}", dependencies=[Depends(get_current_user)])
 def update_customer_route(username: str, updates: dict, db: Session = Depends(get_db)):
+    username = username.strip()
     logging.info(f"PUT /customers/{username} - Updates: {updates}")
     try:
         updated_customer = customer_service.update_customer(db, username, updates)
@@ -61,6 +63,7 @@ def update_customer_route(username: str, updates: dict, db: Session = Depends(ge
 
 @router.delete("/customers/{username}", dependencies=[Depends(get_current_user)])
 def delete_customer_route(username: str, db: Session = Depends(get_db)):
+    username = username.strip()
     logging.info(f"DELETE /customers/{username}")
     try:
         customer_service.delete_customer(db, username)
@@ -72,6 +75,7 @@ def delete_customer_route(username: str, db: Session = Depends(get_db)):
 
 @router.post("/customers/{username}/charge", dependencies=[Depends(get_current_user)])
 def charge_wallet_route(username: str, data: dict, db: Session = Depends(get_db)):
+    print([username])
     try:
         amount = data["amount"]
         charged_customer = customer_service.charge_wallet(db, username, amount)

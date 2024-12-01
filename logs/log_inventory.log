@@ -1,2 +1,39 @@
 2024-12-01 17:52:05,045 - INFO - GET /items
 2024-12-01 17:52:05,818 - INFO - All items retrieved: 0 items
+2024-12-01 19:40:24,457 - INFO - POST /items - Data: {'name': 'TVs', 'description': 'A TV to watch the news', 'price': 199.99, 'stock': 10}
+2024-12-01 19:40:25,144 - ERROR - Error creating item: Name and stock count are required
+2024-12-01 19:40:30,985 - INFO - POST /items - Data: {'name': 'TVs', 'description': 'A TV to watch the news', 'price': 199.99, 'stock': 10}
+2024-12-01 19:40:30,987 - ERROR - Error creating item: Name and stock count are required
+2024-12-01 19:42:13,660 - INFO - POST /items - Data: {'name': 'TVs', 'description': 'A TV to watch the news', 'price': 199.99, 'stock_count': 10}
+2024-12-01 19:42:13,792 - INFO - Item created: <models.inventory.Item object at 0x000001436C2F1580>
+2024-12-01 19:43:27,927 - INFO - POST /items - Data: {'name': 'Playstation', 'description': 'A console to play games', 'price': 399.99, 'stock_count': 15}
+2024-12-01 19:43:27,964 - INFO - Item created: <models.inventory.Item object at 0x000001436C2F2CF0>
+2024-12-01 19:43:36,910 - INFO - GET /items
+2024-12-01 19:43:36,955 - INFO - All items retrieved: 3 items
+2024-12-01 19:43:58,351 - INFO - GET /items
+2024-12-01 19:43:58,364 - INFO - All items retrieved: 3 items
+2024-12-01 19:44:32,370 - INFO - POST /items - Data: {'name': 'Playstation', 'description': 'A console to play games', 'category': 'Games', 'price': 399.99, 'stock_count': 15}
+2024-12-01 19:44:32,410 - INFO - Item created: <models.inventory.Item object at 0x000001436C328CE0>
+2024-12-01 19:44:36,412 - INFO - GET /items
+2024-12-01 19:44:36,440 - INFO - All items retrieved: 4 items
+2024-12-01 19:44:45,779 - INFO - DELETE /items
+2024-12-01 19:44:45,822 - INFO - All items deleted from inventory
+2024-12-01 19:44:58,057 - INFO - POST /items - Data: {'name': 'Playstation', 'description': 'A console to play games', 'category': 'Games', 'price': 399.99, 'stock_count': 15}
+2024-12-01 19:44:58,082 - INFO - Item created: <models.inventory.Item object at 0x000001436C2F26C0>
+2024-12-01 19:45:50,603 - INFO - POST /items - Data: {'name': 'TV', 'description': 'A device to watch the news', 'category': 'Electronics', 'price': 199.99, 'stock_count': 10}
+2024-12-01 19:45:50,634 - INFO - Item created: <models.inventory.Item object at 0x000001436C329670>
+2024-12-01 19:46:32,124 - INFO - POST /items - Data: {'name': 'Table', 'description': 'A table to put stuff on', 'category': 'Furniture', 'price': 49.99, 'stock_count': 7}
+2024-12-01 19:46:32,155 - INFO - Item created: <models.inventory.Item object at 0x000001436C32A3F0>
+2024-12-01 19:46:41,135 - INFO - GET /items
+2024-12-01 19:46:41,146 - INFO - All items retrieved: 3 items
+2024-12-01 19:47:14,474 - INFO - GET /items/1
+2024-12-01 19:47:14,510 - INFO - Item retrieved: <models.inventory.Item object at 0x000001436C328200>
+2024-12-01 19:48:24,011 - INFO - PUT /items/1 - Updates: {'price': 299.99, 'stock': 20}
+2024-12-01 19:48:24,053 - INFO - Item updated: <models.inventory.Item object at 0x000001436C32AED0>
+2024-12-01 19:50:13,915 - INFO - POST /items/1/deduct
+2024-12-01 19:50:13,956 - INFO - Item stock deducted: <models.inventory.Item object at 0x000001436C328980>
+2024-12-01 19:50:33,074 - INFO - DELETE /items/1
+2024-12-01 19:52:32,440 - INFO - DELETE /items/1
+2024-12-01 19:52:32,743 - INFO - Item deleted: 1
+2024-12-01 19:52:52,955 - INFO - DELETE /items
+2024-12-01 19:52:52,992 - INFO - All items deleted from inventory
