@@ -7,12 +7,10 @@ from decouple import config
 from models.customer import Customer
 from database import get_db
 
-# Constants for JWT
 SECRET_KEY = config("SECRET_KEY")
 ALGORITHM = "HS256"
 ADMIN_TOKEN = config("ADMIN_TOKEN")
 
-# HTTPBearer for token authentication
 security = HTTPBearer()
 
 
