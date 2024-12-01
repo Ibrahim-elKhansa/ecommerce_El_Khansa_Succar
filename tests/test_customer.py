@@ -4,6 +4,54 @@ from fastapi.testclient import TestClient
 from decouple import config
 from line_profiler import LineProfiler
 
+"""
+Customer Tests Module
+=====================
+
+This module contains unit tests for customer-related operations in the FastAPI application.
+It ensures the correctness of customer management endpoints, including registering, 
+charging, deducting, and deleting customers.
+
+Features
+--------
+
+- **Unit Tests**:
+  - Test registering a new customer.
+  - Test retrieving a customer by username.
+  - Test charging a customer's wallet.
+  - Test deducting from a customer's wallet.
+  - Test deleting a customer.
+
+Dependencies
+------------
+
+- **FastAPI TestClient**:
+  Used to simulate API requests and responses.
+
+- **LineProfiler**:
+  Used to measure the performance of key service methods.
+
+- **Fixtures**:
+  - `setup_customer`: Initializes test data for customers and cleans up before running tests.
+
+Functions
+---------
+
+- `test_register_customer(setup_customer)`:
+    Tests registering and retrieving a customer.
+
+- `test_charge_customer(setup_customer)`:
+    Tests charging a customer's wallet and verifies the wallet balance.
+
+- `test_deduct_customer(setup_customer)`:
+    Tests deducting from a customer's wallet and ensures the wallet balance decreases correctly.
+
+- `test_delete_customer(setup_customer)`:
+    Tests deleting a customer and verifies that the customer no longer exists.
+
+"""
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app_customer.app_customer import app
 from services.customer_service import CustomerService

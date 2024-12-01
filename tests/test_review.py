@@ -4,6 +4,27 @@ from decouple import config
 from fastapi.testclient import TestClient
 from line_profiler import LineProfiler
 
+"""
+Module: test_review
+
+This module contains tests for the review management functionality in the FastAPI application.
+It evaluates CRUD operations, moderation, and performance profiling for the `ReviewService`.
+
+Tested Endpoints:
+    - POST /api/reviews
+    - GET /api/reviews/product/{product_id}
+    - GET /api/reviews/customer/{customer_id}
+    - PUT /api/reviews/{review_id}
+    - PUT /api/reviews/{review_id}/moderate
+    - DELETE /api/reviews/{review_id}
+
+Dependencies:
+    - FastAPI TestClient
+    - LineProfiler for performance analysis
+    - ReviewService for service-level operations
+"""
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app_review.app_review import app
 from services.review_service import ReviewService

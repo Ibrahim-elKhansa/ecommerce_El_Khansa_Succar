@@ -6,6 +6,54 @@ from app_inventory.app_inventory import app
 
 client = TestClient(app)
 
+"""
+Inventory Routes Test Module
+============================
+
+This module contains unit tests for the `inventory_routes` module of the FastAPI application.
+It tests the API endpoints for inventory management, including creating, retrieving, updating,
+deducting, and deleting inventory items.
+
+Features
+--------
+
+- **Unit Tests**:
+  - Test creating an inventory item.
+  - Test retrieving all inventory items.
+  - Test retrieving a specific inventory item by its ID.
+  - Test updating an inventory item's details.
+  - Test deducting stock from an inventory item.
+  - Test deleting all inventory items.
+
+Dependencies
+------------
+
+- **FastAPI TestClient**:
+  Used to simulate API requests and responses.
+
+Functions
+---------
+
+- `test_create_item()`:
+    Tests the creation of a new inventory item via the `/api/items` endpoint.
+
+- `test_get_all_items()`:
+    Tests retrieving all inventory items using the `/api/items` endpoint.
+
+- `test_get_item()`:
+    Tests retrieving a specific inventory item by ID using the `/api/items/{item_id}` endpoint.
+
+- `test_update_item()`:
+    Tests updating an inventory item's details via the `/api/items/{item_id}` endpoint.
+
+- `test_deduct_item()`:
+    Tests deducting stock from an inventory item using the `/api/items/{item_id}/deduct` endpoint.
+
+- `test_delete_all_items()`:
+    Tests deleting all inventory items from the system using the `/api/items` endpoint.
+
+"""
+
 
 def test_create_item():
     """

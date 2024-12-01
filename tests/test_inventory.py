@@ -3,6 +3,21 @@ import sys, os
 from fastapi.testclient import TestClient
 from decouple import config
 
+"""
+Module: test_inventory
+
+This module contains unit tests for the inventory API endpoints.
+The tests cover various CRUD operations and stock management.
+
+Tested Endpoints:
+    - POST /api/items
+    - GET /api/items
+    - GET /api/items/{item_id}
+    - PUT /api/items/{item_id}
+    - POST /api/items/{item_id}/deduct
+"""
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app_inventory.app_inventory import app
 

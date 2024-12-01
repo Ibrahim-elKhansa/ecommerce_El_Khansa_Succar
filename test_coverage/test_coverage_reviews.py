@@ -11,6 +11,61 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 client = TestClient(app)
 
+"""
+Review Routes Test Module
+=========================
+
+This module contains unit tests for the `review_routes` module of the FastAPI application.
+It tests the API endpoints for review management, including creating, retrieving, updating,
+moderating, and deleting reviews.
+
+Features
+--------
+
+- **Unit Tests**:
+  - Test submitting a new review.
+  - Test retrieving reviews for a specific product.
+  - Test retrieving reviews by a specific customer.
+  - Test updating an existing review.
+  - Test moderating a review (approve or reject).
+  - Test retrieving pending reviews for moderation.
+  - Test deleting a review.
+
+Dependencies
+------------
+
+- **FastAPI TestClient**:
+  Used to simulate API requests and responses.
+
+- **Routes**:
+  - The `review_routes` module handles all review-related operations.
+
+Functions
+---------
+
+- `test_submit_review()`:
+    Tests submitting a new review via the `/api/reviews` endpoint.
+
+- `test_get_product_reviews()`:
+    Tests retrieving all reviews for a product using the `/api/reviews/product/{product_id}` endpoint.
+
+- `test_get_customer_reviews()`:
+    Tests retrieving all reviews by a customer using the `/api/reviews/customer/{customer_id}` endpoint.
+
+- `test_update_review()`:
+    Tests updating a review via the `/api/reviews/{review_id}` endpoint.
+
+- `test_moderate_review()`:
+    Tests moderating a review using the `/api/reviews/{review_id}/moderate` endpoint.
+
+- `test_get_pending_reviews()`:
+    Tests retrieving all reviews pending moderation via the `/api/reviews/pending` endpoint.
+
+- `test_delete_review()`:
+    Tests deleting a review using the `/api/reviews/{review_id}` endpoint.
+
+"""
+
 
 def test_submit_review():
     """

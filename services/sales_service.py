@@ -6,6 +6,60 @@ import time
 import pybreaker
 import requests
 
+"""
+Sales Service Module
+====================
+
+This module provides a service class for managing sales, including operations to 
+create, retrieve, update, and delete sales. It also supports integration with 
+external sales APIs and ensures fault tolerance using the circuit breaker pattern.
+
+Features
+--------
+
+- **Sales Management**:
+  - Create new sales records.
+  - Retrieve sales by customer or item.
+  - Update and delete sales records.
+
+- **Integration**:
+  - External API calls with fault tolerance using `pybreaker`.
+
+- **Profiling**:
+  - Monitors memory usage and execution time for methods using `memory_profiler` and `line_profiler`.
+
+Dependencies
+------------
+
+- **Database**:
+  Interacts with the `Sale` model using SQLAlchemy.
+
+- **API Calls**:
+  Uses `requests` for API communication and `pybreaker` for handling API failures.
+
+Classes
+-------
+
+- **SalesService**:
+  A service class for managing sales operations.
+
+    Methods:
+        - `call_sales_api(endpoint: str, data: dict) -> dict`:
+            Makes an external API call for sales operations.
+        - `create_sale(db: Session, data: dict) -> Sale`:
+            Creates a new sale record in the database.
+        - `get_sales_by_customer(db: Session, customer_id: int) -> list[Sale]`:
+            Retrieves all sales for a specific customer.
+        - `get_sales_by_item(db: Session, item_id: int) -> list[Sale]`:
+            Retrieves all sales for a specific item.
+        - `delete_sale(db: Session, sale_id: int) -> dict`:
+            Deletes a specific sale record by its ID.
+        - `update_sale(db: Session, sale_id: int, updates: dict) -> Sale`:
+            Updates an existing sale record in the database.
+
+"""
+
+
 circuit_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=30)
 try:
     from line_profiler import profile

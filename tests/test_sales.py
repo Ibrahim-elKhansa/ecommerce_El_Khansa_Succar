@@ -4,6 +4,39 @@ from decouple import config
 from fastapi.testclient import TestClient
 from line_profiler import LineProfiler
 
+"""
+Module: test_sales
+
+This module contains tests for the sales management functionality in the FastAPI application.
+It covers CRUD operations and performance profiling for the sales API endpoints.
+
+Tested Endpoints:
+    - POST /api/sales: Create a new sale.
+    - GET /api/sales/customer/{customer_id}: Retrieve sales for a specific customer.
+    - GET /api/sales/item/{item_id}: Retrieve sales for a specific item.
+    - PUT /api/sales/{sale_id}: Update an existing sale.
+    - DELETE /api/sales/{sale_id}: Delete a specific sale.
+
+Performance Profiling:
+    - Utilizes `LineProfiler` to measure the performance of:
+        - `client.post`: For creating sales.
+        - `client.get`: For retrieving sales by customer and item.
+        - `client.put`: For updating sales.
+        - `client.delete`: For deleting sales.
+
+Dependencies:
+    - FastAPI TestClient: Simulates API requests.
+    - LineProfiler: Profiles performance for selected methods.
+
+Setup:
+    - Uses an admin token loaded from the `.env` file for authorization.
+    - Tests ensure that sales are correctly created, retrieved, updated, and deleted.
+
+Usage:
+    Run these tests using `pytest` to validate the correctness and performance of the sales API.
+"""
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app_sales.app_sales import app
 
