@@ -9,8 +9,35 @@ circuit_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=30)
 
 
 class InventoryService:
+    """
+    A service class for managing inventory operations.
+
+    Methods:
+        call_inventory_api(): Calls an external inventory API.
+        create_item(): Creates a new inventory item.
+        get_item(): Retrieves an item by its ID.
+        update_item(): Updates an inventory item.
+        deduct_item(): Deducts one unit from an item's stock count.
+        get_all_items(): Retrieves all inventory items.
+        get_item_details(): Retrieves detailed information about an item.
+        delete_item(): Deletes a specific inventory item.
+        delete_all_items(): Deletes all inventory items.
+    """
     @circuit_breaker
     def call_inventory_api(self, endpoint: str, data: dict):
+        """
+        Calls an external inventory API.
+
+        Args:
+            endpoint (str): The API endpoint to call.
+            data (dict): The data payload to send in the API request.
+
+        Returns:
+            dict: The response data from the API.
+
+        Raises:
+            Exception: If the API call fails.
+        """
         try:
             response = requests.post(f"http://127.0.0.1:8001/api/", json=data)
             response.raise_for_status()
@@ -19,6 +46,19 @@ class InventoryService:
             raise Exception(f"Failed to call inventory API: {e}")
     @profile
     def create_item(self, db: Session, data: dict):
+        """
+        Creates a new inventory item.
+
+        Args:
+            db (Session): The database session.
+            data (dict): A dictionary containing the item data.
+
+        Returns:
+            Item: The created inventory item.
+
+        Raises:
+            ValueError: If required fields are missing.
+        """
         if not data.get("name") or not data.get("stock_count"):
             raise ValueError("Name and stock count are required")
         
@@ -36,10 +76,34 @@ class InventoryService:
     
     @profile
     def get_item(self, db: Session, item_id: int):
+        """
+        Retrieves an item by its ID.
+
+        Args:
+            db (Session): The database session.
+            item_id (int): The ID of the item.
+
+        Returns:
+            Item or None: The inventory item if found, else None.
+        """
         return db.query(Item).filter(Item.id == item_id).first()
 
     @profile
     def update_item(self, db: Session, item_id: int, data: dict):
+        """
+        Updates an inventory item.
+
+        Args:
+            db (Session): The database session.
+            item_id (int): The ID of the item to update.
+            data (dict): The updated data for the item.
+
+        Returns:
+            Item: The updated inventory item.
+
+        Raises:
+            ValueError: If the item is not found.
+        """
         item = db.query(Item).filter(Item.id == item_id).first()
         if not item:
             raise ValueError("Item not found")
@@ -53,6 +117,19 @@ class InventoryService:
 
     @profile
     def deduct_item(self, db: Session, item_id: int):
+        """
+        Deducts one unit from an item's stock count.
+
+        Args:
+            db (Session): The database session.
+            item_id (int): The ID of the item to deduct.
+
+        Returns:
+            Item: The updated inventory item.
+
+        Raises:
+            ValueError: If the item is not found or has no stock available.
+        """
         item = db.query(Item).filter(Item.id == item_id).first()
         if not item:
             raise ValueError("Item not found")
@@ -66,10 +143,32 @@ class InventoryService:
 
     @profile
     def get_all_items(self, db: Session):
+        """
+        Retrieves all inventory items.
+
+        Args:
+            db (Session): The database session.
+
+        Returns:
+            list[Item]: A list of all inventory items.
+        """
         return db.query(Item).all()
 
     @profile
     def get_item_details(self, db: Session, item_id: int):
+        """
+        Retrieves detailed information about an item.
+
+        Args:
+            db (Session): The database session.
+            item_id (int): The ID of the item.
+
+        Returns:
+            Item: The inventory item if found.
+
+        Raises:
+            ValueError: If the item is not found.
+        """
         item = db.query(Item).filter(Item.id == item_id).first()
         if not item:
             raise ValueError("Item not found")
@@ -78,7 +177,17 @@ class InventoryService:
     @profile
     def delete_item(self, db: Session, item_id: int):
         """
-        Deletes a single item from the inventory by its ID.
+        Deletes a specific inventory item by its ID.
+
+        Args:
+            db (Session): The database session.
+            item_id (int): The ID of the item to delete.
+
+        Returns:
+            dict: A success message.
+
+        Raises:
+            ValueError: If the item is not found.
         """
         item = db.query(Item).filter(Item.id == item_id).first()
         if not item:
@@ -89,6 +198,15 @@ class InventoryService:
 
     @profile
     def delete_all_items(self, db: Session):
+        """
+        Deletes all inventory items.
+
+        Args:
+            db (Session): The database session.
+
+        Returns:
+            None
+        """
         db.query(Item).delete()
         db.commit()
 

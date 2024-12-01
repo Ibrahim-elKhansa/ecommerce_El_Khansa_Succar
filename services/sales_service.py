@@ -16,8 +16,32 @@ except ImportError:
 
 
 class SalesService:
+    """
+    A service class for managing sales, including operations to create, retrieve, update, and delete sales.
+
+    Methods:
+        call_sales_api(endpoint: str, data: dict): Calls an external sales API.
+        create_sale(db: Session, data: dict): Creates a new sale record in the database.
+        get_sales_by_customer(db: Session, customer_id: int): Retrieves all sales associated with a specific customer.
+        get_sales_by_item(db: Session, item_id: int): Retrieves all sales associated with a specific item.
+        delete_sale(db: Session, sale_id: int): Deletes a sale record by its ID.
+        update_sale(db: Session, sale_id: int, updates: dict): Updates an existing sale record with new data.
+    """
     @circuit_breaker
     def call_sales_api(self, endpoint: str, data: dict):
+        """
+        Calls an external sales API.
+
+        Args:
+            endpoint (str): The API endpoint URL.
+            data (dict): The data payload to send with the request.
+
+        Returns:
+            dict: The JSON response from the API.
+
+        Raises:
+            Exception: If the API call fails.
+        """
         try:
             response = requests.post(f"http://127.0.0.1:8002/api/", json=data)
             response.raise_for_status()
@@ -29,6 +53,19 @@ class SalesService:
 
     @profile
     def create_sale(self, db: Session, data: dict):
+        """
+        Creates a new sale record in the database.
+
+        Args:
+            db (Session): The database session.
+            data (dict): The sale data to create.
+
+        Returns:
+            Sale: The created sale record.
+
+        Raises:
+            ValueError: If the sale creation fails.
+        """
         try:
             sale = Sale(**data)
             db.add(sale)
@@ -41,6 +78,19 @@ class SalesService:
 
     @profile
     def get_sales_by_customer(self, db: Session, customer_id: int):
+        """
+        Retrieves all sales associated with a specific customer.
+
+        Args:
+            db (Session): The database session.
+            customer_id (int): The ID of the customer.
+
+        Returns:
+            list[Sale]: A list of sales associated with the customer.
+
+        Raises:
+            ValueError: If the query fails.
+        """
         try:
             return db.query(Sale).filter(Sale.customer_id == customer_id).all()
         except SQLAlchemyError as e:
@@ -48,6 +98,19 @@ class SalesService:
 
     @profile
     def get_sales_by_item(self, db: Session, item_id: int):
+        """
+        Retrieves all sales associated with a specific item.
+
+        Args:
+            db (Session): The database session.
+            item_id (int): The ID of the item.
+
+        Returns:
+            list[Sale]: A list of sales associated with the item.
+
+        Raises:
+            ValueError: If the query fails.
+        """
         try:
             return db.query(Sale).filter(Sale.item_id == item_id).all()
         except SQLAlchemyError as e:
@@ -55,6 +118,19 @@ class SalesService:
 
     @profile
     def delete_sale(self, db: Session, sale_id: int):
+        """
+        Deletes a sale record by its ID.
+
+        Args:
+            db (Session): The database session.
+            sale_id (int): The ID of the sale to delete.
+
+        Returns:
+            dict: A success message indicating the sale was deleted.
+
+        Raises:
+            ValueError: If the sale is not found or deletion fails.
+        """
         try:
             sale = db.query(Sale).filter(Sale.id == sale_id).first()
             if not sale:
@@ -68,6 +144,20 @@ class SalesService:
 
     @profile
     def update_sale(self, db: Session, sale_id: int, updates: dict):
+        """
+        Updates an existing sale record with new data.
+
+        Args:
+            db (Session): The database session.
+            sale_id (int): The ID of the sale to update.
+            updates (dict): A dictionary of updates for the sale.
+
+        Returns:
+            Sale: The updated sale record.
+
+        Raises:
+            ValueError: If the sale is not found or update fails.
+        """
         try:
             sale = db.query(Sale).filter(Sale.id == sale_id).first()
             if not sale:
