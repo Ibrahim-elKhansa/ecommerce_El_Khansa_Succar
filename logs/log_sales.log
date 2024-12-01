@@ -1,0 +1,2 @@
+2024-12-01 17:55:16,777 - INFO - GET /sales/item/1
+2024-12-01 17:55:16,784 - INFO - Sales retrieved for item_id=1: 0 sales

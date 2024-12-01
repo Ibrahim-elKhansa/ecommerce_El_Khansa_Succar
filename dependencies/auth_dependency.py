@@ -42,10 +42,15 @@ def get_current_user(
         return {"sub": "admin", "role": "admin"}
 
     # Otherwise, proceed with normal JWT validation
-    payload = decode_jwt(token)
-    if not payload or "sub" not in payload:
-        raise HTTPException(status_code=401, detail="Invalid token payload")
-    return payload
+    try:
+        payload = decode_jwt(token)
+        if not payload or "sub" not in payload:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+        return payload
+    except JWTError as e:
+        if token == ADMIN_TOKEN:  # Re-check in case the exception occurs
+            return {"sub": "admin", "role": "admin"}
+        raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
 
 
 def require_admin(
