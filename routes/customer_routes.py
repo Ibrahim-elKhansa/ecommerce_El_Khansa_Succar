@@ -71,18 +71,22 @@ def delete_customer_route(username: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=str(e))
 
 @router.post("/customers/{username}/charge", dependencies=[Depends(get_current_user)])
-def charge_wallet_route(username: str, amount: float, db: Session = Depends(get_db)):
-    logging.info(f"POST /customers/{username}/charge - Amount: {amount}")
+def charge_wallet_route(username: str, data: dict, db: Session = Depends(get_db)):
     try:
+        amount = data["amount"]
         charged_customer = customer_service.charge_wallet(db, username, amount)
-        logging.info(f"Wallet charged for customer {username}: {charged_customer}")
+        logging.info(f"Wallet charged for {username}: {charged_customer}")
         return {"message": "Wallet charged successfully", "customer": charged_customer}
+    except KeyError as e:
+        logging.error(f"KeyError: {e}")
+        raise HTTPException(status_code=422, detail=f"Missing 'amount' in request data: {e}")
     except ValueError as e:
         logging.error(f"Error charging wallet for {username}: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/customers/{username}/deduct", dependencies=[Depends(get_current_user)])
-def deduct_wallet_route(username: str, amount: float, db: Session = Depends(get_db)):
+def deduct_wallet_route(username: str, data: dict, db: Session = Depends(get_db)):
+    amount = data["amount"]
     logging.info(f"POST /customers/{username}/deduct - Amount: {amount}")
     try:
         deducted_customer = customer_service.deduct_wallet(db, username, amount)
