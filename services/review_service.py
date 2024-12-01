@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from models.review import Review
 from memory_profiler import profile
+from bleach import clean
 import pybreaker
 import requests
 
@@ -15,13 +16,30 @@ class ReviewService:
             return response.json()
         except requests.RequestException as e:
             raise Exception(f"Failed to call review API: {e}")
+    def validate_review_data(self, data: dict):
+        # Ensure rating is between 1 and 5
+        if not 1 <= data.get("rating", 0) <= 5:
+            raise ValueError("Rating must be between 1 and 5.")
+        
+        # Ensure comment is not empty and has a valid length
+        comment = data.get("comment", "").strip()
+        if len(comment) > 500:
+            raise ValueError("Comment cannot exceed 500 characters.")
+        
+        # Sanitize the comment to prevent XSS attacks
+        data["comment"] = clean(comment, strip=True)
+        return data
+
     @profile
     def submit_review(self, db: Session, data: dict):
+        # Validate and sanitize data
+        validated_data = self.validate_review_data(data)
+
         new_review = Review(
-            product_id=data["product_id"],
-            customer_id=data["customer_id"],
-            rating=data["rating"],
-            comment=data.get("comment", ""),
+            product_id=validated_data["product_id"],
+            customer_id=validated_data["customer_id"],
+            rating=validated_data["rating"],
+            comment=validated_data.get("comment", ""),
         )
         db.add(new_review)
         db.commit()
@@ -33,6 +51,10 @@ class ReviewService:
         review = db.query(Review).filter(Review.id == review_id).first()
         if not review:
             raise ValueError("Review not found")
+
+        # Validate and sanitize updates
+        if "rating" in updates or "comment" in updates:
+            updates = self.validate_review_data(updates)
 
         for key, value in updates.items():
             setattr(review, key, value)

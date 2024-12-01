@@ -17,7 +17,7 @@ def submit_review(data: dict, db: Session = Depends(get_db)):
         new_review = review_service.submit_review(db, data)
         return {"message": "Review submitted successfully", "review": new_review}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=422, detail=str(e))
 
 @router.put("/reviews/{review_id}", dependencies=[Depends(get_current_user),Depends(limiter.limit("10/minute"))])
 def update_review(review_id: int, updates: dict, db: Session = Depends(get_db)):
@@ -25,7 +25,7 @@ def update_review(review_id: int, updates: dict, db: Session = Depends(get_db)):
         updated_review = review_service.update_review(db, review_id, updates)
         return {"message": "Review updated successfully", "review": updated_review}
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=422, detail=str(e))
 
 @router.delete("/reviews/{review_id}", dependencies=[Depends(get_current_user), Depends(limiter.limit("10/minute"))])
 def delete_review(review_id: int, db: Session = Depends(get_db)):
