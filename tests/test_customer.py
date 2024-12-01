@@ -5,7 +5,7 @@ from decouple import config
 from line_profiler import LineProfiler
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from app_customer import app
+from app_customer.app_customer import app
 from services.customer_service import CustomerService
 
 client = TestClient(app)
