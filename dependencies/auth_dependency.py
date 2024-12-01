@@ -6,9 +6,10 @@ from typing import Optional
 from models.customer import Customer
 from sqlalchemy.orm import Session
 from database import get_db
+from decouple import config
 
-SECRET_KEY = "bobandomar"
-ALGORITHM = "HS256"
+SECRET_KEY = config("SECRET_KEY")
+ALGORITHM = config("ALGORITHM")
 
 # HTTPBearer for token authentication
 security = HTTPBearer()

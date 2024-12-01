@@ -5,12 +5,12 @@ from pydantic import BaseModel
 from models.customer import Customer
 from database import SessionLocal
 from sqlalchemy.orm import Session
-from models.customer import Customer
 from schemas.customer_schema import CustomerResponse
+from decouple import config
 
-SECRET_KEY = "bobandomar"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = config("SECRET_KEY")
+ALGORITHM = config("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = config("ACCESS_TOKEN_EXPIRE_MINUTES", cast=int)
 
 class TokenData(BaseModel):
     username: str
